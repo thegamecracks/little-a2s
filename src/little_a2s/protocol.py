@@ -121,11 +121,10 @@ class A2SClientProtocol:
         try:
             header = self._parse_header(reader)
             payload = self._parse_payload(reader, header)
+            if payload is not None:
+                self._handle_payload(payload)
         except EOFError as e:
             raise ValueError("Received incomplete data") from e
-
-        if payload is not None:
-            self._handle_payload(payload)
 
     def events_received(self) -> list[ClientEvent]:
         """Return a list of events received since this last call."""
