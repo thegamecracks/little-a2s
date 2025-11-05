@@ -12,10 +12,11 @@ class ClientPacket(Packet):
 
     header: bytes
     payload: bytes
-    challenge: bytes
+    challenge: int
 
     def __bytes__(self) -> bytes:
-        return b"".join((self.header, self.payload, self.challenge))
+        challenge = self.challenge.to_bytes(4, "little", signed=True)
+        return b"".join((self.header, self.payload, challenge))
 
 
 @dataclass(kw_only=True)
@@ -24,7 +25,7 @@ class ClientPacketInfo(ClientPacket):
 
     header: bytes = field(default=b"\xFF\xFF\xFF\xFF\x54", init=False)
     payload: bytes = field(default=b"Source Engine Query\x00", init=False)
-    challenge: bytes = field(default=b"\xFF\xFF\xFF\xFF")
+    challenge: int = -1
 
 
 @dataclass(kw_only=True)
@@ -33,7 +34,7 @@ class ClientPacketPlayers(ClientPacket):
 
     header: bytes = field(default=b"\xFF\xFF\xFF\xFF\x55", init=False)
     payload: bytes = field(default=b"", init=False)
-    challenge: bytes = field(default=b"\xFF\xFF\xFF\xFF")
+    challenge: int = -1
 
 
 @dataclass(kw_only=True)
@@ -42,4 +43,4 @@ class ClientPacketRules(ClientPacket):
 
     header: bytes = field(default=b"\xFF\xFF\xFF\xFF\x56", init=False)
     payload: bytes = field(default=b"", init=False)
-    challenge: bytes = field(default=b"\xFF\xFF\xFF\xFF")
+    challenge: int = -1
