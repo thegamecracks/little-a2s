@@ -1,6 +1,6 @@
 import struct
 from io import BytesIO
-from typing import Protocol, runtime_checkable
+from typing import Literal, Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -28,6 +28,12 @@ class Reader:
 
     def read_char(self) -> str:
         return self.read(1).decode("ascii")
+
+    def read_null(self) -> Literal[0]:
+        n = self.read_byte()
+        if n != 0:
+            raise ValueError(f"Expected null byte, got {n!r}")
+        return n
 
     def read_short(self) -> int:
         return int.from_bytes(self.read(2), "little", signed=True)
