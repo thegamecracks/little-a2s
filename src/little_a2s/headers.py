@@ -2,8 +2,10 @@
 from dataclasses import dataclass
 from enum import IntEnum
 
+from little_a2s.enums import _EnumReprMixin
 
-class HeaderType(IntEnum):
+
+class HeaderType(_EnumReprMixin, IntEnum):
     SIMPLE = -1
     MULTI = -2
 

@@ -2,29 +2,30 @@ from dataclasses import dataclass
 from enum import IntEnum
 from typing import Self
 
+from little_a2s.enums import _EnumReprMixin
 from little_a2s.reader import Reader
 
 
 # ClientEventInfo types
-class ServerType(IntEnum):
+class ServerType(_EnumReprMixin, IntEnum):
     DEDICATED = ord("d")
     LISTEN = ord("l")
     RELAY = ord("p")
 
 
-class Environment(IntEnum):
+class Environment(_EnumReprMixin, IntEnum):
     LINUX = ord("l")
     WINDOWS = ord("w")
     MACOS_M = ord("m")  # Ergh, can this be combined?
     MACOS_O = ord("o")
 
 
-class Visibility(IntEnum):
+class Visibility(_EnumReprMixin, IntEnum):
     PUBLIC = 0
     PRIVATE = 1
 
 
-class VAC(IntEnum):
+class VAC(_EnumReprMixin, IntEnum):
     INSECURE = 0
     SECURE = 1
 
@@ -58,23 +59,23 @@ class ExtraInfo:
 
 
 # ClientEventGoldsourceInfo types
-class GoldsourceServerType(IntEnum):
+class GoldsourceServerType(_EnumReprMixin, IntEnum):
     DEDICATED = ord("D")
     LISTEN = ord("L")
     RELAY = ord("P")
 
 
-class GoldsourceEnvironment(IntEnum):
+class GoldsourceEnvironment(_EnumReprMixin, IntEnum):
     LINUX = ord("L")
     WINDOWS = ord("W")
 
 
-class GoldsourceModType(IntEnum):
+class GoldsourceModType(_EnumReprMixin, IntEnum):
     SINGLE_AND_MULTIPLAYER = 0
     MULTIPLAYER_ONLY = 1
 
 
-class GoldsourceModDLL(IntEnum):
+class GoldsourceModDLL(_EnumReprMixin, IntEnum):
     NATIVE = 0
     """This mod uses the Half-Life DLL."""
 
