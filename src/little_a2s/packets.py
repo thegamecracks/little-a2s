@@ -23,7 +23,7 @@ class ClientPacket(Packet):
 class ClientPacketInfo(ClientPacket):
     """An A2S_INFO packet sent by the client."""
 
-    header: bytes = field(default=b"\xFF\xFF\xFF\xFF\x54", init=False)
+    header: bytes = field(default=b"\xff\xff\xff\xff\x54", init=False)
     payload: bytes = field(default=b"Source Engine Query\x00", init=False)
     challenge: int = -1
 
@@ -32,7 +32,7 @@ class ClientPacketInfo(ClientPacket):
 class ClientPacketPlayers(ClientPacket):
     """An A2S_PLAYER packet sent by the client."""
 
-    header: bytes = field(default=b"\xFF\xFF\xFF\xFF\x55", init=False)
+    header: bytes = field(default=b"\xff\xff\xff\xff\x55", init=False)
     payload: bytes = field(default=b"", init=False)
     challenge: int = -1
 
@@ -41,6 +41,6 @@ class ClientPacketPlayers(ClientPacket):
 class ClientPacketRules(ClientPacket):
     """An A2S_RULES packet sent by the client."""
 
-    header: bytes = field(default=b"\xFF\xFF\xFF\xFF\x56", init=False)
+    header: bytes = field(default=b"\xff\xff\xff\xff\x56", init=False)
     payload: bytes = field(default=b"", init=False)
     challenge: int = -1
