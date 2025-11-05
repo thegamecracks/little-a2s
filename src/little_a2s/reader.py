@@ -48,17 +48,18 @@ class Reader:
         return int.from_bytes(self.read(8), "little")
 
     def read_null_string(self) -> bytes:
-        return self.read_until(b"\x00")[:-1]
+        return self.read_until(b"\x00")
 
     def read_until(self, sep: bytes) -> bytes:
-        assert len(sep) == 1
-        data = bytearray()
+        """Read until the sep character is found and return all bytes before sep."""
+        if len(sep) != 1:
+            raise ValueError("sep must be exactly 1 byte")
 
         # FIXME: is this hot loop slow?
-        while (char := self.read(1)) != sep:
-            data.append(char[0])
+        data = bytearray()
+        while (char := self.read_byte()) != sep:
+            data.append(char)
 
-        data.append(char[0])  # include sep itself
         return bytes(data)
 
     def read_varchar1(self) -> bytes:
