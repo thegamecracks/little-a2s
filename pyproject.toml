@@ -40,3 +40,6 @@ dev = [
 Homepage = "https://github.com/thegamecracks/little-a2s"
 GitHub = "https://github.com/thegamecracks/little-a2s"
 Issues = "https://github.com/thegamecracks/little-a2s/issues"
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
