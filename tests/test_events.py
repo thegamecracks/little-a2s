@@ -2,10 +2,12 @@ from little_a2s.events import (
     VAC,
     ClientEventGoldsourceInfo,
     ClientEventInfo,
+    ClientEventPlayers,
     Environment,
     GoldsourceMod,
     GoldsourceModDLL,
     GoldsourceModType,
+    Player,
     ServerType,
     Visibility,
 )
@@ -15,6 +17,7 @@ from .constants import (
     A2S_INFO_COUNTERSTRIKE_SOURCE,
     A2S_INFO_GOLDSOURCE_COUNTERSTRIKE,
     A2S_INFO_SIN1_MP,
+    A2S_PLAYER,
 )
 
 
@@ -84,4 +87,24 @@ def test_a2s_info_goldsource() -> None:
         ),
         vac=VAC.SECURE,
         bots=0,
+    )
+
+
+def test_a2s_player() -> None:
+    players = ClientEventPlayers.from_reader(Reader(A2S_PLAYER[5:]))
+    assert players == ClientEventPlayers(
+        players=[
+            Player(
+                index=1,
+                name="[D]---->T.N.W<----",
+                score=14,
+                duration=514.370361328125,
+            ),
+            Player(
+                index=2,
+                name="Killer !!!",
+                score=5,
+                duration=434.2844543457031,
+            ),
+        ]
     )
