@@ -253,6 +253,7 @@ class A2SClientProtocol:
         header = reader.read_byte()
         if header == 0x41:  # S2C_CHALLENGE
             event = ClientEventChallenge.from_reader(reader)
+            self.challenge = event.challenge
         elif header == 0x49:  # A2S_INFO
             event = ClientEventInfo.from_reader(reader)
         elif header == 0x6D:  # Goldsource A2S_INFO
