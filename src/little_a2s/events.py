@@ -41,19 +41,18 @@ class ExtraInfo:
     game_id: int | None = None
 
     @classmethod
-    def from_reader(cls, reader: Reader) -> Self:
+    def from_reader(cls, reader: Reader, flag: int) -> Self:
         extra = cls()
-        extra_flag = reader.read_byte()
-        if extra_flag & 0x80:
+        if flag & 0x80:
             extra.port = reader.read_ushort()
-        if extra_flag & 0x10:
+        if flag & 0x10:
             extra.steam_id = reader.read_uint64()
-        if extra_flag & 0x40:
+        if flag & 0x40:
             extra.spectator_port = reader.read_ushort()
             extra.spectator_name = reader.read_null_utf8()
-        if extra_flag & 0x20:
+        if flag & 0x20:
             extra.keywords = reader.read_null_utf8()
-        if extra_flag & 0x01:
+        if flag & 0x01:
             extra.game_id = reader.read_uint64()
         return extra
 
@@ -178,7 +177,13 @@ class ClientEventInfo(ClientEvent):
         vac = VAC(reader.read_byte())
         # Extra data will be here for The Ship
         version = reader.read_null_utf8()
-        extra = ExtraInfo.from_reader(reader)
+
+        try:
+            extra_flag = reader.read_byte()
+        except EOFError:
+            extra = None
+        else:
+            extra = ExtraInfo.from_reader(reader, extra_flag)
 
         return cls(
             protocol=protocol,
