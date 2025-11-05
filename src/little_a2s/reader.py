@@ -56,6 +56,10 @@ class Reader:
     def read_null_string(self) -> bytes:
         return self.read_until(0)
 
+    def read_null_utf8(self) -> str:
+        s = self.read_null_string()
+        return s.decode()
+
     def read_until(self, sep: int) -> bytes:
         """Read until the sep character is found and return all bytes before sep."""
         if not 0x00 <= sep < 0xFF:

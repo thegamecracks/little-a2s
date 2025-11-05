@@ -50,9 +50,9 @@ class ExtraInfo:
             extra.steam_id = reader.read_uint64()
         if extra_flag & 0x40:
             extra.spectator_port = reader.read_ushort()
-            extra.spectator_name = reader.read_null_string().decode()
+            extra.spectator_name = reader.read_null_utf8()
         if extra_flag & 0x20:
-            extra.keywords = reader.read_null_string().decode()
+            extra.keywords = reader.read_null_utf8()
         if extra_flag & 0x01:
             extra.game_id = reader.read_uint64()
         return extra
@@ -96,8 +96,8 @@ class GoldsourceMod:
 
     @classmethod
     def from_reader(cls, reader: Reader) -> Self:
-        link = reader.read_null_string().decode()
-        download_link = reader.read_null_string().decode()
+        link = reader.read_null_utf8()
+        download_link = reader.read_null_utf8()
         reader.read_null()
         version = reader.read_ulong()
         size = reader.read_ulong()
@@ -164,10 +164,10 @@ class ClientEventInfo(ClientEvent):
     @classmethod
     def from_reader(cls, reader: Reader) -> Self:
         protocol = reader.read_byte()
-        name = reader.read_null_string().decode()
-        map = reader.read_null_string().decode()
-        folder = reader.read_null_string().decode()
-        game = reader.read_null_string().decode()
+        name = reader.read_null_utf8()
+        map = reader.read_null_utf8()
+        folder = reader.read_null_utf8()
+        game = reader.read_null_utf8()
         id = reader.read_ushort()
         players = reader.read_byte()
         max_players = reader.read_byte()
@@ -177,7 +177,7 @@ class ClientEventInfo(ClientEvent):
         visibility = Visibility(reader.read_byte())
         vac = VAC(reader.read_byte())
         # Extra data will be here for The Ship
-        version = reader.read_null_string().decode()
+        version = reader.read_null_utf8()
         extra = ExtraInfo.from_reader(reader)
 
         return cls(
@@ -220,11 +220,11 @@ class ClientEventGoldsourceInfo(ClientEvent):
 
     @classmethod
     def from_reader(cls, reader: Reader) -> Self:
-        address = reader.read_null_string().decode()
-        name = reader.read_null_string().decode()
-        map = reader.read_null_string().decode()
-        folder = reader.read_null_string().decode()
-        game = reader.read_null_string().decode()
+        address = reader.read_null_utf8()
+        name = reader.read_null_utf8()
+        map = reader.read_null_utf8()
+        folder = reader.read_null_utf8()
+        game = reader.read_null_utf8()
         players = reader.read_byte()
         max_players = reader.read_byte()
         protocol = reader.read_byte()
@@ -264,7 +264,7 @@ class ClientEventPlayers(ClientEvent):
         players = []
         for _ in range(reader.read_byte()):
             index = reader.read_byte()
-            name = reader.read_null_string().decode()
+            name = reader.read_null_utf8()
             score = reader.read_long()
             duration = reader.read_float()
             # Extra data will be here for The Ship
