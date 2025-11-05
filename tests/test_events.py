@@ -17,7 +17,7 @@ from little_a2s.events import (
 )
 from little_a2s.reader import Reader
 
-from .constants import (
+from tests.constants import (
     A2S_INFO_COUNTERSTRIKE_SOURCE,
     A2S_INFO_GOLDSOURCE_COUNTERSTRIKE,
     A2S_INFO_SIN1_MP,
