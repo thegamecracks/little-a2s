@@ -267,7 +267,7 @@ class A2SClientProtocol:
         self._events.append(event)
 
 
-class A2SGoldsourceClientProtocol(A2SClientProtocol):
+class A2SClientGoldsourceProtocol(A2SClientProtocol):
     """The Goldsource variant of the A2S client protocol used by older games."""
 
     def _parse_multi_header(self, reader: Reader) -> Header:
