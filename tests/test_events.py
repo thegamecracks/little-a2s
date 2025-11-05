@@ -22,6 +22,7 @@ from tests.constants import (
     A2S_INFO_GOLDSOURCE_COUNTERSTRIKE,
     A2S_INFO_SIN1_MP,
     A2S_PLAYER,
+    S2C_CHALLENGE,
 )
 
 
@@ -121,5 +122,5 @@ def test_a2s_rules() -> None: ...
 
 
 def test_s2c_challenge() -> None:
-    challenge = ClientEventChallenge.from_reader(Reader(b"\x4b\xa1\xd5\x22"))
+    challenge = ClientEventChallenge.from_reader(Reader(S2C_CHALLENGE[5:]))
     assert challenge == ClientEventChallenge(challenge=584425803)
