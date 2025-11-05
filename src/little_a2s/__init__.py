@@ -1,3 +1,10 @@
+from .client import (
+    A2S as A2S,
+    A2SGoldsource as A2SGoldsource,
+    filter_type as filter_type,
+    first as first,
+    last as last,
+)
 from .events import (
     ClientEvent as ClientEvent,
     ClientEventChallenge as ClientEventChallenge,
