@@ -1,4 +1,4 @@
-from little_a2s.client import A2SClientProtocol
+from little_a2s.protocol import A2SClientProtocol
 
 from little_a2s.events import (
     ClientEventChallenge,

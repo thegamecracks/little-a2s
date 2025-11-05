@@ -1,8 +1,3 @@
-from .client import (
-    A2SClientProtocol as A2SClientProtocol,
-    A2SClientGoldsourceProtocol as A2SClientGoldsourceProtocol,
-    MultiPartResponse as MultiPartResponse,
-)
 from .events import (
     ClientEvent as ClientEvent,
     ClientEventChallenge as ClientEventChallenge,
@@ -35,5 +30,10 @@ from .packets import (
     ClientPacketPlayers as ClientPacketPlayers,
     ClientPacketRules as ClientPacketRules,
     Packet as Packet,
+)
+from .protocol import (
+    A2SClientProtocol as A2SClientProtocol,
+    A2SClientGoldsourceProtocol as A2SClientGoldsourceProtocol,
+    MultiPartResponse as MultiPartResponse,
 )
 from .reader import Readable as Readable, Reader as Reader
