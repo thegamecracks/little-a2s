@@ -1,3 +1,5 @@
+import pytest
+
 from little_a2s.events import (
     VAC,
     ClientEventGoldsourceInfo,
@@ -108,3 +110,7 @@ def test_a2s_player() -> None:
             ),
         ]
     )
+
+
+@pytest.mark.skip("Please add A2S_RULES example responses")
+def test_a2s_rules() -> None: ...
