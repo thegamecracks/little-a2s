@@ -5,3 +5,4 @@ from .headers import (
     MultiGoldsourceHeader as MultiGoldsourceHeader,
     MultiSourceHeader as MultiSourceHeader,
 )
+from .reader import Readable as Readable, Reader as Reader
