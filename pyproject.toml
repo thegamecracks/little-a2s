@@ -30,7 +30,10 @@ classifiers = [
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest~=8.4"]
+dev = [
+    "coverage~=7.11",
+    "pytest~=8.4",
+]
 
 [project.urls]
 # https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-labels
