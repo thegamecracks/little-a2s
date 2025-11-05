@@ -64,6 +64,8 @@ def test_a2s_info() -> None:
         extra=None,
     )
 
+    # TODO: add A2S_INFO response with extra data
+
 
 def test_a2s_info_goldsource() -> None:
     info = ClientEventGoldsourceInfo.from_reader(
