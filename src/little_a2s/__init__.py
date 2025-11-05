@@ -1,3 +1,8 @@
+from .client import (
+    A2SClientProtocol as A2SClientProtocol,
+    A2SClientGoldsourceProtocol as A2SClientGoldsourceProtocol,
+    MultiPartResponse as MultiPartResponse,
+)
 from .events import (
     ClientEvent as ClientEvent,
     ClientEventChallenge as ClientEventChallenge,
