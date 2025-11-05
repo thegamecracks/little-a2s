@@ -6,7 +6,7 @@
 [![](https://img.shields.io/github/actions/workflow/status/thegamecracks/little-a2s/ruff-check.yml?style=flat-square&logo=ruff&label=lints)](https://docs.astral.sh/ruff/)
 [![](https://img.shields.io/github/actions/workflow/status/thegamecracks/little-a2s/ruff-format.yml?style=flat-square&logo=ruff&label=style)](https://docs.astral.sh/ruff/)
 
-An asynchronous wrapper over the A2S Valve Source Query protocol.
+A sans-I/O library implementing the A2S Valve Source Query protocol.
 
 ## Installation
 
