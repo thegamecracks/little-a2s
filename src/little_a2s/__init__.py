@@ -19,11 +19,12 @@ from .events import (
     Visibility as Visibility,
 )
 from .headers import (
-    CompressionHeader as CompressionHeader,
+    Compression as Compression,
     Header as Header,
     HeaderType as HeaderType,
     MultiGoldsourceHeader as MultiGoldsourceHeader,
-    MultiSourceHeader as MultiSourceHeader,
+    MultiHeader as MultiHeader,
+    SimpleHeader as SimpleHeader,
 )
 from .packets import (
     ClientPacket as ClientPacket,
