@@ -81,7 +81,7 @@ class A2S:
         return self
 
     def __exit__(self, exc_type, exc_val, tb) -> None:
-        return self._sock.__exit__()
+        return self._sock.__exit__(exc_type, exc_val, tb)
 
     def events_received(self) -> list[ClientEvent]:
         """Purge all outstanding events not returned by other methods."""
