@@ -32,6 +32,9 @@ class Reader:
     def read_short(self) -> int:
         return int.from_bytes(self.read(2), "little", signed=True)
 
+    def read_ushort(self) -> int:
+        return int.from_bytes(self.read(2), "little")
+
     def read_long(self) -> int:
         return int.from_bytes(self.read(4), "little", signed=True)
 
@@ -63,15 +66,11 @@ class Reader:
         return self.read(length)
 
     def read_varchar2(self) -> bytes:
-        length = self.read_short()
-        if length < 0:
-            raise ValueError(f"Expected positive length, got {length} instead")
+        length = self.read_ushort()
         return self.read(length)
 
     def read_varchar4(self) -> bytes:
-        length = self.read_long()
-        if length < 0:
-            raise ValueError(f"Expected positive length, got {length} instead")
+        length = self.read_ulong()
         return self.read(length)
 
     def read_varchar8(self) -> bytes:
