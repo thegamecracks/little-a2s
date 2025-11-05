@@ -1,7 +1,7 @@
 # https://developer.valvesoftware.com/wiki/Server_queries
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import IntEnum
 
 
@@ -21,6 +21,7 @@ class Header:
 class MultiGoldsourceHeader(Header):
     """A multi-packet response header for Goldsource games."""
 
+    type: HeaderType = field(default=HeaderType.SIMPLE)
     id: int
     current: int
     total: int
@@ -30,6 +31,7 @@ class MultiGoldsourceHeader(Header):
 class MultiSourceHeader(Header):
     """A multi-packet response header for Source games."""
 
+    type: HeaderType = field(default=HeaderType.SIMPLE)
     id: int
     current: int
     total: int
