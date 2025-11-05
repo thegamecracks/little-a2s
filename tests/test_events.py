@@ -1,4 +1,3 @@
-import re
 import pytest
 
 from little_a2s.events import (
