@@ -59,17 +59,6 @@ class ExtraInfo:
 
 
 # ClientEventGoldsourceInfo types
-class GoldsourceServerType(_EnumReprMixin, IntEnum):
-    DEDICATED = ord("D")
-    LISTEN = ord("L")
-    RELAY = ord("P")
-
-
-class GoldsourceEnvironment(_EnumReprMixin, IntEnum):
-    LINUX = ord("L")
-    WINDOWS = ord("W")
-
-
 class GoldsourceModType(_EnumReprMixin, IntEnum):
     SINGLE_AND_MULTIPLAYER = 0
     MULTIPLAYER_ONLY = 1
@@ -217,8 +206,8 @@ class ClientEventGoldsourceInfo(ClientEvent):
     players: int
     max_players: int
     protocol: int
-    type: GoldsourceServerType
-    environment: GoldsourceEnvironment
+    type: ServerType
+    environment: Environment
     visibility: Visibility
     mod: GoldsourceMod | None
     vac: VAC
@@ -234,8 +223,8 @@ class ClientEventGoldsourceInfo(ClientEvent):
         players = reader.read_byte()
         max_players = reader.read_byte()
         protocol = reader.read_byte()
-        type = GoldsourceServerType(reader.read_byte())
-        environment = GoldsourceEnvironment(reader.read_byte())
+        type = ServerType(ord(reader.read_char().lower()))
+        environment = Environment(ord(reader.read_char().lower()))
         visibility = Visibility(reader.read_byte())
         mod = GoldsourceMod.from_reader(reader) if reader.read_byte() == 1 else None
         vac = VAC(reader.read_byte())
