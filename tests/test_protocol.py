@@ -33,3 +33,17 @@ def test_single_packets() -> None:
 
     assert source.events_received() == []
     assert source.packets_to_send() == []
+
+
+def test_protocol_challenge() -> None:
+    protocol = A2SClientProtocol()
+    assert protocol.challenge == -1
+    assert protocol.info().challenge == -1
+    assert protocol.players().challenge == -1
+    assert protocol.rules().challenge == -1
+
+    protocol.receive_datagram(S2C_CHALLENGE)
+    assert protocol.challenge == 584425803
+    assert protocol.info().challenge == 584425803
+    assert protocol.players().challenge == 584425803
+    assert protocol.rules().challenge == 584425803
