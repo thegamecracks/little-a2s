@@ -17,9 +17,9 @@ class Reader:
 
         self._file = data
 
-    def read(self, n: int) -> bytes:
+    def read(self, n: int = -1, /) -> bytes:
         data = self._file.read(n)
-        if len(data) < n:
+        if n >= 0 and len(data) < n:
             raise EOFError
         return data
 
