@@ -1,3 +1,23 @@
+from .events import (
+    ClientEvent as ClientEvent,
+    ClientEventChallenge as ClientEventChallenge,
+    ClientEventGoldsourceInfo as ClientEventGoldsourceInfo,
+    ClientEventInfo as ClientEventInfo,
+    ClientEventPlayers as ClientEventPlayers,
+    ClientEventRules as ClientEventRules,
+    Environment as Environment,
+    Event as Event,
+    ExtraInfo as ExtraInfo,
+    GoldsourceEnvironment as GoldsourceEnvironment,
+    GoldsourceMod as GoldsourceMod,
+    GoldsourceModDLL as GoldsourceModDLL,
+    GoldsourceModType as GoldsourceModType,
+    GoldsourceServerType as GoldsourceServerType,
+    Player as Player,
+    ServerType as ServerType,
+    VAC as VAC,
+    Visibility as Visibility,
+)
 from .headers import (
     CompressionHeader as CompressionHeader,
     Header as Header,
