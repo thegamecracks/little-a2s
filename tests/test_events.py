@@ -1,7 +1,9 @@
+import re
 import pytest
 
 from little_a2s.events import (
     VAC,
+    ClientEventChallenge,
     ClientEventGoldsourceInfo,
     ClientEventInfo,
     ClientEventPlayers,
@@ -114,3 +116,8 @@ def test_a2s_player() -> None:
 
 @pytest.mark.skip("Please add A2S_RULES example responses")
 def test_a2s_rules() -> None: ...
+
+
+def test_s2c_challenge() -> None:
+    challenge = ClientEventChallenge.from_reader(Reader(b"\x4b\xa1\xd5\x22"))
+    assert challenge == ClientEventChallenge(challenge=584425803)
