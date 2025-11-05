@@ -35,6 +35,9 @@ class Reader:
     def read_long(self) -> int:
         return int.from_bytes(self.read(4), "little", signed=True)
 
+    def read_ulong(self) -> int:
+        return int.from_bytes(self.read(4), "little")
+
     def read_float(self) -> float:
         return struct.unpack("<f", self.read(4))[0]
 
