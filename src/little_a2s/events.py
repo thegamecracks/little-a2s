@@ -76,7 +76,7 @@ class GoldsourceMod:
 
 
 # ClientEventPlayer types
-@dataclass
+@dataclass(kw_only=True)
 class Player:
     """A player returned in the A2S_PLAYER response."""
 
