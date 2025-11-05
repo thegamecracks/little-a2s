@@ -54,12 +54,12 @@ class Reader:
         return int.from_bytes(self.read(8), "little")
 
     def read_null_string(self) -> bytes:
-        return self.read_until(b"\x00")
+        return self.read_until(0)
 
-    def read_until(self, sep: bytes) -> bytes:
+    def read_until(self, sep: int) -> bytes:
         """Read until the sep character is found and return all bytes before sep."""
-        if len(sep) != 1:
-            raise ValueError("sep must be exactly 1 byte")
+        if not 0x00 <= sep < 0xFF:
+            raise ValueError(f"Expected sep in range [0, 255], got {sep!r}")
 
         # FIXME: is this hot loop slow?
         data = bytearray()
