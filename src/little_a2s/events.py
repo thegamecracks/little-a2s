@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 from enum import IntEnum
+from typing import Self
+
+from little_a2s.reader import Reader
 
 
 # ClientEventInfo types
@@ -33,9 +36,26 @@ class ExtraInfo:
     port: int | None = None
     steam_id: int | None = None
     spectator_port: int | None = None
-    spectator_name: str
-    keywords: str
-    game_id: int
+    spectator_name: str | None = None
+    keywords: str | None = None
+    game_id: int | None = None
+
+    @classmethod
+    def from_reader(cls, reader: Reader) -> Self:
+        extra = cls()
+        extra_flag = reader.read_byte()
+        if extra_flag & 0x80:
+            extra.port = reader.read_ushort()
+        if extra_flag & 0x10:
+            extra.steam_id = reader.read_uint64()
+        if extra_flag & 0x40:
+            extra.spectator_port = reader.read_ushort()
+            extra.spectator_name = reader.read_null_string().decode()
+        if extra_flag & 0x20:
+            extra.keywords = reader.read_null_string().decode()
+        if extra_flag & 0x01:
+            extra.game_id = reader.read_uint64()
+        return extra
 
 
 # ClientEventGoldsourceInfo types
@@ -73,6 +93,25 @@ class GoldsourceMod:
     size: int
     type: GoldsourceModType
     dll: GoldsourceModDLL
+
+    @classmethod
+    def from_reader(cls, reader: Reader) -> Self:
+        link = reader.read_null_string().decode()
+        download_link = reader.read_null_string().decode()
+        reader.read_null()
+        version = reader.read_ulong()
+        size = reader.read_ulong()
+        type = GoldsourceModType(reader.read_byte())
+        dll = GoldsourceModDLL(reader.read_byte())
+
+        return cls(
+            link=link,
+            download_link=download_link,
+            version=version,
+            size=size,
+            type=type,
+            dll=dll,
+        )
 
 
 # ClientEventPlayer types
@@ -122,6 +161,43 @@ class ClientEventInfo(ClientEvent):
     version: str
     extra: ExtraInfo | None
 
+    @classmethod
+    def from_reader(cls, reader: Reader) -> Self:
+        protocol = reader.read_byte()
+        name = reader.read_null_string().decode()
+        map = reader.read_null_string().decode()
+        folder = reader.read_null_string().decode()
+        game = reader.read_null_string().decode()
+        id = reader.read_ushort()
+        players = reader.read_byte()
+        max_players = reader.read_byte()
+        bots = reader.read_byte()
+        type = ServerType(reader.read_byte())
+        environment = Environment(reader.read_byte())
+        visibility = Visibility(reader.read_byte())
+        vac = VAC(reader.read_byte())
+        # Extra data will be here for The Ship
+        version = reader.read_null_string().decode()
+        extra = ExtraInfo.from_reader(reader)
+
+        return cls(
+            protocol=protocol,
+            name=name,
+            map=map,
+            folder=folder,
+            game=game,
+            id=id,
+            players=players,
+            max_players=max_players,
+            bots=bots,
+            type=type,
+            environment=environment,
+            visibility=visibility,
+            vac=vac,
+            version=version,
+            extra=extra,
+        )
+
 
 @dataclass(kw_only=True)
 class ClientEventGoldsourceInfo(ClientEvent):
@@ -142,12 +218,60 @@ class ClientEventGoldsourceInfo(ClientEvent):
     vac: VAC
     bots: int
 
+    @classmethod
+    def from_reader(cls, reader: Reader) -> Self:
+        address = reader.read_null_string().decode()
+        name = reader.read_null_string().decode()
+        map = reader.read_null_string().decode()
+        folder = reader.read_null_string().decode()
+        game = reader.read_null_string().decode()
+        players = reader.read_byte()
+        max_players = reader.read_byte()
+        protocol = reader.read_byte()
+        type = GoldsourceServerType(reader.read_byte())
+        environment = GoldsourceEnvironment(reader.read_byte())
+        visibility = Visibility(reader.read_byte())
+        mod = GoldsourceMod.from_reader(reader) if reader.read_byte() == 1 else None
+        vac = VAC(reader.read_byte())
+        bots = reader.read_byte()
+
+        return cls(
+            address=address,
+            name=name,
+            map=map,
+            folder=folder,
+            game=game,
+            players=players,
+            max_players=max_players,
+            protocol=protocol,
+            type=type,
+            environment=environment,
+            visibility=visibility,
+            mod=mod,
+            vac=vac,
+            bots=bots,
+        )
+
 
 @dataclass(kw_only=True)
 class ClientEventPlayers(ClientEvent):
     """An A2S_PLAYER client protocol event."""
 
     players: list[Player]
+
+    @classmethod
+    def from_reader(cls, reader: Reader) -> Self:
+        players = []
+        for _ in range(reader.read_byte()):
+            index = reader.read_byte()
+            name = reader.read_null_string().decode()
+            score = reader.read_long()
+            duration = reader.read_float()
+            # Extra data will be here for The Ship
+            player = Player(index=index, name=name, score=score, duration=duration)
+            players.append(player)
+
+        return cls(players=players)
 
 
 @dataclass(kw_only=True)
@@ -162,7 +286,23 @@ class ClientEventRules(ClientEvent):
         """Return all rules decoded in UTF-8."""
         return {k.decode(): v.decode() for k, v in self.rules.items()}
 
+    @classmethod
+    def from_reader(cls, reader: Reader) -> Self:
+        rules = {}
+        for _ in range(reader.read_byte()):
+            name = reader.read_null_string()
+            value = reader.read_null_string()
+            rules[name] = value
+
+        return cls(rules=rules)
+
 
 @dataclass(kw_only=True)
 class ClientEventChallenge(ClientEvent):
     """An S2C_CHALLENGE client protocol event."""
+
+    challenge: int
+
+    @classmethod
+    def from_reader(cls, reader: Reader) -> Self:
+        return cls(challenge=reader.read_long())
