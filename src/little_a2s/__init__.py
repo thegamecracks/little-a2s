@@ -33,7 +33,7 @@ from .packets import (
 )
 from .protocol import (
     A2SClientProtocol as A2SClientProtocol,
-    A2SClientGoldsourceProtocol as A2SClientGoldsourceProtocol,
+    A2SGoldsourceClientProtocol as A2SGoldsourceClientProtocol,
     MultiPartResponse as MultiPartResponse,
 )
 from .reader import Readable as Readable, Reader as Reader
