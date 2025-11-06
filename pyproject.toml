@@ -42,7 +42,8 @@ docs = [
 
 [project.urls]
 # https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-labels
-Homepage = "https://github.com/thegamecracks/little-a2s"
+Homepage = "https://little-a2s.rtfd.io/"
+Documentation = "https://little-a2s.rtfd.io/"
 GitHub = "https://github.com/thegamecracks/little-a2s"
 Issues = "https://github.com/thegamecracks/little-a2s/issues"
 
