@@ -48,9 +48,3 @@ This project requires Python 3.11 or newer. Install it from PyPI by using pip:
    $ python3 -m venv
    $ .venv/bin/activate
    (.venv) $ pip install little-a2s
-
-Synchronous Clients
--------------------
-
-.. autoclass:: little_a2s.A2S
-.. autoclass:: little_a2s.A2SGoldsource
