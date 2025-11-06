@@ -1,12 +1,12 @@
-import pytest
-
 from little_a2s.events import (
     VAC,
     ClientEventChallenge,
     ClientEventGoldsourceInfo,
     ClientEventInfo,
     ClientEventPlayers,
+    ClientEventRules,
     Environment,
+    ExtraInfo,
     GoldsourceMod,
     GoldsourceModDLL,
     GoldsourceModType,
@@ -19,8 +19,10 @@ from little_a2s.reader import Reader
 from tests.constants import (
     A2S_INFO_COUNTERSTRIKE_SOURCE,
     A2S_INFO_GOLDSOURCE_COUNTERSTRIKE,
+    A2S_INFO_PROJECT_ZOMBOID,
     A2S_INFO_SIN1_MP,
     A2S_PLAYER,
+    A2S_RULES_PROJECT_ZOMBOID,
     S2C_CHALLENGE,
 )
 
@@ -67,7 +69,32 @@ def test_a2s_info_sin1_mp() -> None:
     )
 
 
-# TODO: add A2S_INFO response with extra data
+def test_a2s_info_project_zomboid() -> None:
+    info = ClientEventInfo.from_reader(Reader(A2S_INFO_PROJECT_ZOMBOID[5:]))
+    assert info == ClientEventInfo(
+        protocol=17,
+        name="play.thegamecracks.xyz",
+        map="Muldraugh, KY",
+        folder="zomboid",
+        game="Project Zomboid",
+        id=0,
+        players=0,
+        max_players=8,
+        bots=0,
+        type=ServerType.DEDICATED,
+        environment=Environment.LINUX,
+        visibility=Visibility.PRIVATE,
+        vac=VAC.SECURE,
+        version="1.0.0.0",
+        extra=ExtraInfo(
+            port=16261,
+            steam_id=90276363418906655,
+            spectator_port=None,
+            spectator_name=None,
+            keywords="",
+            game_id=108600,
+        ),
+    )
 
 
 def test_a2s_info_goldsource() -> None:
@@ -119,8 +146,17 @@ def test_a2s_player() -> None:
     )
 
 
-@pytest.mark.skip("Please add A2S_RULES example responses")
-def test_a2s_rules() -> None: ...
+def test_a2s_rules_project_zomboid() -> None:
+    rules = ClientEventRules.from_reader(Reader(A2S_RULES_PROJECT_ZOMBOID[5:]))
+    assert rules == ClientEventRules(
+        rules={
+            b"": b"modCount",
+            b"304": b"mods",
+            b"CasterPlus;TombBodyCompat;TombBody;TombBodyCustom;TombBodyTex;TombBodyTexDOLL;TombBodyTexNUDE;velkiel_fixed_cooking_recipes": b"open",
+            b"0": b"public",
+            b"1": b"version",
+        }
+    )
 
 
 def test_s2c_challenge() -> None:
