@@ -1,6 +1,6 @@
 # import asyncio
-from contextlib import suppress
 import socket
+from contextlib import suppress
 from typing import Callable, Iterable, Iterator, Self, Type, TypeVar
 
 from little_a2s.events import (
