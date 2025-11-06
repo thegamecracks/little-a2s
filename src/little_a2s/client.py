@@ -19,8 +19,6 @@ DEFAULT_TIMEOUT = 3.0
 T = TypeVar("T")
 ClientEventT = TypeVar("ClientEventT", bound=ClientEvent)
 
-AddressTuple = tuple[str, int] | tuple[str, int, int, int] | tuple[int, bytes]
-
 
 def filter_type(
     t: Type[T] | tuple[Type[T], ...],
@@ -57,9 +55,9 @@ class A2S:
 
     :param sock:
         The UDP socket to send and receive queries from.
+        The socket must be connected to a remote address beforehand
+        with :meth:`~socket.socket.connect()`.
         See also :meth:`from_addr()`.
-    :param addr:
-        The (host, port) address tuple to send queries to.
     :param challenge:
         The initial challenge sequence to use for requests.
         This is only needed if you close the socket and need
@@ -70,18 +68,11 @@ class A2S:
     buffer_size = 32768  # probably overkill?
     _events: list[ClientEvent]
 
-    def __init__(
-        self,
-        sock: socket.socket,
-        addr: AddressTuple,
-        *,
-        challenge: int = -1,
-    ) -> None:
+    def __init__(self, sock: socket.socket, *, challenge: int = -1) -> None:
         if sock.type != socket.SOCK_DGRAM:
             raise ValueError("Socket type must be SOCK_DGRAM")
 
         self._sock = sock
-        self._addr = addr
         self._protocol = self._create_protocol(challenge=challenge)
         self._events = []
 
@@ -152,7 +143,7 @@ class A2S:
         sock = socket.socket(family, type, proto)
         sock.settimeout(timeout)
         sock.connect(addr)
-        return cls(sock, addr)
+        return cls(sock)
 
     def _create_protocol(self, *, challenge: int) -> A2SClientProtocol:
         """Create the A2S protocol to manage state.
@@ -178,7 +169,7 @@ class A2S:
         :raises ValueError: The server sent a malformed packet.
 
         """
-        self._send(bytes(request()))
+        self._sock.send(bytes(request()))
         types = (t, ClientEventChallenge)
         remaining = 3
 
@@ -192,14 +183,10 @@ class A2S:
                 self._discard(found)
                 return found
 
-            self._send(bytes(request()))
+            self._sock.send(bytes(request()))
             remaining -= 1
 
         raise TimeoutError(f"Server failed to respond with {t.__name__}")
-
-    def _send(self, data: bytes) -> int:
-        """Send a datagram to the socket."""
-        return self._sock.sendto(data, self._addr)
 
     def _recv(self) -> list[ClientEvent]:
         """Read one datagram from the socket and pass it to the protocol.
