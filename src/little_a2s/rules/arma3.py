@@ -1,4 +1,3 @@
-# https://community.bistudio.com/wiki/Arma_3:_ServerBrowserProtocol3
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -11,16 +10,35 @@ from little_a2s.reader import Reader
 
 @dataclass(kw_only=True)
 class Arma3Rules:
+    """A deserialized set of rules, mods, and signatures for Arma 3
+    and similar Real Virtuality games like DayZ.
+
+    Reference: https://community.bistudio.com/wiki/Arma_3:_ServerBrowserProtocol3
+
+    """
+
     version: int
+    """The version of this protocol."""
     overflow: int
+    """General flags (overflow flags)."""
     dlc: Arma3DLC
+    """A set of DLC flags indicated by the server.
+
+    Some bits may be set that aren't part of this flag's members, up to 0xFFFF.
+
+    """
     difficulty: Arma3Difficulty
+    """The difficulty options defined by the server."""
     dlc_hashes: list[int]
+    """A list of hashes for each DLC flag set, in order."""
     mods: list[Arma3Mod]
+    """A list of mods that are required by the server, including CDLC."""
     signatures: list[str]
+    """A list of key filenames loaded on the server, not including the .bikey suffix."""
 
     @classmethod
     def from_rules(cls, rules: dict[bytes, bytes] | ClientEventRules) -> Self:
+        """Parse this class from a rules mapping."""
         if isinstance(rules, ClientEventRules):
             rules = rules.rules
 
@@ -90,6 +108,12 @@ class Arma3Rules:
 
 
 class Arma3DLC(IntFlag):
+    """A set of DLC flags indicated by the server.
+
+    Some bits may be set that aren't part of this flag's members, up to 0xFFFF.
+
+    """
+
     KART = 0x1
     MARKSMEN = 0x2
     HELI = 0x4
@@ -108,13 +132,19 @@ class Arma3DLC(IntFlag):
 @dataclass(kw_only=True)
 class Arma3Difficulty:
     difficulty: int
+    """The difficulty level, usually between 0-3."""
     skill: int
+    """The AI skill level, usually between 0-3."""
     advanced_flight_model: bool
+    """Indicates if Advanced Flight Model is enabled."""
     third_person_view: bool
+    """Indicates if third-person view is enabled."""
     weapon_crosshair: bool
+    """Indicates if the weapon crosshair is enabled."""
 
     @classmethod
     def from_int(cls, n: int) -> Self:
+        """Parse this class from a 16-bit unsigned integer."""
         assert 0 <= n < 0xFFFF
         return cls(
             difficulty=n & 0b111,
@@ -127,13 +157,20 @@ class Arma3Difficulty:
 
 @dataclass(kw_only=True)
 class Arma3Mod:
+    """A mod required by the server."""
+
     hash: int
+    """The 32-bit hash of that mod."""
     dlc: bool
+    """Indicates if this is a DLC mod."""
     steam_id: int
+    """The workshop ID of the mod, or app ID if it is DLC."""
     name: str
+    """The name of the mod. Usually omitted for DLC."""
 
     @classmethod
     def from_reader(cls, reader: Reader) -> Self:
+        """Parse this class from a reader."""
         hash = reader.read_ulong()
 
         length = reader.read_byte()

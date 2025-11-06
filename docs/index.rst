@@ -65,6 +65,7 @@ API Reference
 
    sync
    protocol
+   rules
 
 Examples
 --------
