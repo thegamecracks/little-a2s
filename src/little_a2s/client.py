@@ -55,9 +55,10 @@ class A2S:
 
     :param sock:
         The UDP socket to send and receive queries from.
-        The socket must be connected to a remote address beforehand
-        with :meth:`~socket.socket.connect()`.
-        See also :meth:`from_addr()`.
+        The socket **must** be connected to a remote address beforehand
+        with :meth:`~socket.socket.connect()`. You may also want to
+        set a timeout with :meth:`~socket.socket.settimeout()`.
+        Alternatively, use :meth:`from_addr()` to construct the socket for you.
     :param challenge:
         The initial challenge sequence to use for requests.
         This is optional if you close the socket and want to resume
