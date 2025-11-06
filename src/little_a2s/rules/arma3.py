@@ -102,6 +102,7 @@ class Arma3DLC(IntFlag):
     TANKS = 0x200
     CONTACT = 0x400  # Contact platform
     ENOCH = 0x800  # Contact DLC
+    ART_OF_WAR = 0x1000
 
 
 @dataclass(kw_only=True)
