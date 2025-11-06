@@ -25,7 +25,7 @@ from tests.constants import (
 )
 
 
-def test_a2s_info() -> None:
+def test_a2s_info_counterstrike_source() -> None:
     info = ClientEventInfo.from_reader(Reader(A2S_INFO_COUNTERSTRIKE_SOURCE[5:]))
     assert info == ClientEventInfo(
         protocol=2,
@@ -45,6 +45,8 @@ def test_a2s_info() -> None:
         extra=None,
     )
 
+
+def test_a2s_info_sin1_mp() -> None:
     info = ClientEventInfo.from_reader(Reader(A2S_INFO_SIN1_MP[5:]))
     assert info == ClientEventInfo(
         protocol=47,
@@ -64,7 +66,8 @@ def test_a2s_info() -> None:
         extra=None,
     )
 
-    # TODO: add A2S_INFO response with extra data
+
+# TODO: add A2S_INFO response with extra data
 
 
 def test_a2s_info_goldsource() -> None:
