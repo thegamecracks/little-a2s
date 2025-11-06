@@ -30,7 +30,11 @@ $ .venv/bin/activate
 
 ## Usage
 
-TODO
+For now, see the [examples] directory for basic usage or the [documentation]
+for a complete API reference.
+
+[examples]: https://github.com/thegamecracks/little-a2s/tree/main/examples
+[documentation]: https://little-a2s.rtfd.io/
 
 ## License
 
