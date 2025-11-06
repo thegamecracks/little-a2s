@@ -284,7 +284,7 @@ class ClientEventRules(ClientEvent):
     @classmethod
     def from_reader(cls, reader: Reader) -> Self:
         rules = {}
-        for _ in range(reader.read_byte()):
+        for _ in range(reader.read_ushort()):
             name = reader.read_null_string()
             value = reader.read_null_string()
             rules[name] = value
