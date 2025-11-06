@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import IntFlag
-from typing import Self
+from typing import Mapping, Self
 
 from little_a2s.events import ClientEventRules
 from little_a2s.reader import Reader
@@ -37,7 +37,7 @@ class Arma3Rules:
     """A list of key filenames loaded on the server, not including the .bikey suffix."""
 
     @classmethod
-    def from_rules(cls, rules: dict[bytes, bytes] | ClientEventRules) -> Self:
+    def from_rules(cls, rules: Mapping[bytes, bytes] | ClientEventRules) -> Self:
         """Parse this class from a rules mapping."""
         if isinstance(rules, ClientEventRules):
             rules = rules.rules
@@ -69,7 +69,7 @@ class Arma3Rules:
         )
 
     @staticmethod
-    def _assemble_rules(rules: dict[bytes, bytes]) -> bytes:
+    def _assemble_rules(rules: Mapping[bytes, bytes]) -> bytes:
         # Real Virtuality stores the payload in chunks of 125 bytes,
         # ordered and enumerated.
         data = bytearray()
