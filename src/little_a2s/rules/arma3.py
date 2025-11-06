@@ -38,7 +38,12 @@ class Arma3Rules:
 
     @classmethod
     def from_rules(cls, rules: Mapping[bytes, bytes] | ClientEventRules) -> Self:
-        """Parse this class from a rules mapping."""
+        """Parse this class from a rules mapping.
+
+        :raises EOFError: Not enough bytes could be read.
+        :raises ValueError: The data is malformed.
+
+        """
         if isinstance(rules, ClientEventRules):
             rules = rules.rules
 
@@ -170,7 +175,12 @@ class Arma3Mod:
 
     @classmethod
     def from_reader(cls, reader: Reader) -> Self:
-        """Parse this class from a reader."""
+        """Parse this class from a reader.
+
+        :raises EOFError: Not enough bytes could be read.
+        :raises ValueError: The data is malformed.
+
+        """
         hash = reader.read_ulong()
 
         length = reader.read_byte()
