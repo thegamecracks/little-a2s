@@ -35,6 +35,9 @@ A synchronous and sans-I/O library implementing the A2S Valve Source Query proto
        print(a2s.players())
        print(a2s.rules())
 
+Table of Contents
+-----------------
+
 .. toctree::
    :maxdepth: 2
 
