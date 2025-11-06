@@ -36,7 +36,6 @@ class MultiPartResponse:
     """A multi-part response waiting to be assembled."""
 
     id: int
-    current: int
     total: int
     compressed: Compression | None
     payloads: dict[int, bytes] = field(default_factory=dict)
@@ -235,7 +234,6 @@ class A2SClientProtocol:
         compressed = header.compressed if isinstance(header, MultiHeader) else None
         response = MultiPartResponse(
             id=header.id,
-            current=header.current,
             total=header.total,
             compressed=compressed,
         )
