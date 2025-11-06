@@ -34,6 +34,10 @@ dev = [
     "coverage~=7.11",
     "pytest~=8.4",
 ]
+docs = [
+    "sphinx~=8.2",
+    "sphinx-book-theme~=1.1",
+]
 
 [project.urls]
 # https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-labels
@@ -43,3 +47,6 @@ Issues = "https://github.com/thegamecracks/little-a2s/issues"
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
+
+[tool.uv]
+default-groups = "all"
