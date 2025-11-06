@@ -8,11 +8,19 @@ class Packet:
 
 @dataclass(kw_only=True)
 class ClientPacket(Packet):
-    """An A2S packet sent by the client."""
+    """An A2S packet sent by the client.
+
+    This class and its subclasses can be coerced into byte streams by passing
+    to :class:`bytes() <bytes>`, for example ``bytes(packet)``.
+
+    """
 
     header: bytes
+    """The header of the request."""
     payload: bytes
+    """The payload of the request."""
     challenge: int
+    """The challenge number last given by the server."""
 
     def __bytes__(self) -> bytes:
         challenge = self.challenge.to_bytes(4, "little", signed=True)
