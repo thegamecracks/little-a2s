@@ -38,6 +38,10 @@ A synchronous and sans-I/O library implementing the A2S Valve Source Query proto
 .. toctree::
    :maxdepth: 2
 
+   sync
+   protocol
+   async
+
 Installation
 ------------
 
