@@ -87,7 +87,7 @@ class MyA2SProtocol(asyncio.DatagramProtocol):
         # After parsing the datagram, we may receive events resulting from it.
         # It can take several datagrams in the case of multi-packet responses.
         events = self._proto.events_received()
-        if self._send_fut is None:
+        if not events or self._send_fut is None:
             return
 
         print(f"Parsed event: {type(events[0]).__name__}")
