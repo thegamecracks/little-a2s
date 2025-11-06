@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field
 from typing import assert_never
 
@@ -26,6 +27,8 @@ from little_a2s.packets import (
 from little_a2s.reader import Reader
 
 MultiAnyHeader = MultiHeader | MultiGoldsourceHeader
+
+log = logging.getLogger(__name__)
 
 
 @dataclass(kw_only=True)
@@ -70,6 +73,7 @@ class MultiPartResponse:
         size = self.compressed.size
         checksum = self.compressed.checksum
 
+        log.debug("Decompressing bz2 payload")
         payload = bz2.decompress(payload)
 
         if len(payload) != size:
@@ -116,6 +120,7 @@ class A2SClientProtocol:
         :raises ValueError: The data is malformed.
 
         """
+        log.debug("Receiving datagram: %r", data)
         reader = Reader(data)
 
         try:
@@ -154,13 +159,18 @@ class A2SClientProtocol:
         This should be invoked after some sort of timeout.
 
         """
-        return self._responses.pop(id, None)
+        response = self._responses.pop(id, None)
+        if response:
+            log.debug("Invalidated response %d", response.id)
+        return response
 
     def _parse_header(self, reader: Reader) -> Header:
         type = HeaderType(reader.read_long())
         if type == HeaderType.SIMPLE:
+            log.debug("Parsing simple header")
             return self._parse_simple_header(reader)
         elif type == HeaderType.MULTI:
+            log.debug("Parsing multi-packet header")
             return self._parse_multi_header(reader)
         else:
             assert_never(type)
@@ -177,6 +187,7 @@ class A2SClientProtocol:
 
         if id >> 15:
             # Our crc32() function returns an unsigned int, so we need ulong here.
+            log.debug("Payload is marked as compressed")
             decompressed_size = reader.read_ulong()
             checksum = reader.read_ulong()
             compressed = Compression(size=decompressed_size, checksum=checksum)
@@ -195,8 +206,10 @@ class A2SClientProtocol:
         if isinstance(header, SimpleHeader):
             return reader.read()
         elif isinstance(header, MultiHeader):
+            log.debug("Parsing multi-packet payload")
             return self._parse_multi_payload(reader, header)
         elif isinstance(header, MultiGoldsourceHeader):
+            log.debug("Parsing Goldsource multi-packet payload")
             return self._parse_multi_payload(reader, header)
         else:
             raise ValueError(f"Unknown header type {header!r}")
@@ -215,8 +228,10 @@ class A2SClientProtocol:
     ) -> MultiPartResponse:
         response = self._responses.get(header.id)
         if response is not None:
+            log.debug("Found previous response %d", response.id)
             return response
 
+        log.debug("Creeating new response %d", header.id)
         compressed = header.compressed if isinstance(header, MultiHeader) else None
         response = MultiPartResponse(
             id=header.id,
@@ -235,6 +250,7 @@ class A2SClientProtocol:
     ) -> bytes | None:
         payload = reader.read()
 
+        log.debug("Adding payload part %d of %d", header.current + 1, header.total)
         try:
             response.add(header, payload)
         except ValueError:
@@ -244,6 +260,7 @@ class A2SClientProtocol:
         payload = response.assemble()
         if payload is not None:
             self.invalidate_response(header.id)
+            log.debug("Successfully assembled payload")
             return payload
 
     def _handle_payload(self, data: bytes) -> None:
@@ -251,19 +268,25 @@ class A2SClientProtocol:
 
         header = reader.read_byte()
         if header == 0x41:  # S2C_CHALLENGE
+            log.debug("Parsing S2C_CHALLENGE payload")
             event = ClientEventChallenge.from_reader(reader)
             self.challenge = event.challenge
         elif header == 0x49:  # A2S_INFO
+            log.debug("Parsing A2S_INFO payload")
             event = ClientEventInfo.from_reader(reader)
         elif header == 0x6D:  # Goldsource A2S_INFO
+            log.debug("Parsing Goldsource A2S_INFO payload")
             event = ClientEventGoldsourceInfo.from_reader(reader)
         elif header == 0x44:  # A2S_PLAYER
+            log.debug("Parsing A2S_PLAYER payload")
             event = ClientEventPlayers.from_reader(reader)
         elif header == 0x45:  # A2S_RULES
+            log.debug("Parsing A2S_RULES payload")
             event = ClientEventRules.from_reader(reader)
         else:
             raise ValueError(f"Unknown payload header type {header:X}")
 
+        log.debug("Appending event: %s", type(event).__name__)
         self._events.append(event)
 
 
