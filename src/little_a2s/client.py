@@ -123,7 +123,10 @@ class A2S:
     def events_received(self, *, addr: Address | None = None) -> list[ClientEvent]:
         """Purge all outstanding events not returned by other methods.
 
-        :param addr: The address to retrieve events from.
+        :param addr:
+            The address to retrieve events from.
+
+            .. versionadded:: 0.4.0
 
         """
         # NOTE: not thread-safe!
@@ -138,6 +141,8 @@ class A2S:
             The address to send the request to.
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
+
+            .. versionadded:: 0.4.0
 
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
@@ -154,6 +159,8 @@ class A2S:
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
+            .. versionadded:: 0.4.0
+
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
 
@@ -168,6 +175,8 @@ class A2S:
             The address to send the request to.
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
+
+            .. versionadded:: 0.4.0
 
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
@@ -232,6 +241,8 @@ class A2S:
 
         :param timeout: The timeout to set on the socket.
 
+        .. versionadded:: 0.4.0
+
         """
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         sock.settimeout(timeout)
@@ -248,6 +259,8 @@ class A2S:
                 info = a2s.info(addr=("::1", 27015))
 
         :param timeout: The timeout to set on the socket.
+
+        .. versionadded:: 0.4.0
 
         """
         sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
