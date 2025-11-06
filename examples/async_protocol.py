@@ -138,7 +138,7 @@ class MyA2SProtocol(asyncio.DatagramProtocol):
         # more than one event per request.
         assert len(events) == 1
 
-        # If we receive a challenge, regenereate the request so the
+        # If we receive a challenge, regenerate the request so the
         # A2S protocol can suffix the challenge to the new payload.
         #
         # Just in case, we'll set a limit so we don't spam traffic.
