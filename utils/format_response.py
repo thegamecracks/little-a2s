@@ -19,7 +19,9 @@ def main() -> None:
     lines = []
     while True:
         line = input(": ")
-        if line:
+        if line.startswith(('b"', "b'")):
+            print(format_bytes(eval(line)))
+        elif line:
             lines.append(line)
         elif lines:
             print(format_data(lines))
@@ -28,12 +30,20 @@ def main() -> None:
             break
 
 
+def format_bytes(b: bytes) -> str:
+    data = [rf"\x{n:02x}" for n in b]
+    return chunk_chars(data)
+
+
 def format_data(lines: list[str]) -> str:
     data = []
     for line in lines:
         line, _, _ = line.partition("  ")
         data.extend(rf"\x{c.lower()}" for c in line.split())
+    return chunk_chars(data)
 
+
+def chunk_chars(data: list[str]) -> str:
     chunks = [data[i : i + 18] for i in range(0, len(data), 18)]
     chunks = [f'b"{"".join(c)}"' for c in chunks]
     return "\n".join(chunks)
