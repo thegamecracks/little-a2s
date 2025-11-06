@@ -40,6 +40,10 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
 }
 
+# https://github.com/tox-dev/sphinx-autodoc-typehints
+always_document_param_types = True
+always_use_bars_union = True
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
