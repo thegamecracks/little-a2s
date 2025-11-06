@@ -21,12 +21,23 @@ with A2S.from_addr("example.com", 27015, timeout=1) as a2s:
 
 ## Installation
 
-This project requires Python 3.11 or newer.
+The minimum Python version required is **3.11**. No other dependencies are required.
+
+This package can be installed from PyPI using one of the following commands:
 
 ```sh
-$ python3 -m venv
-$ .venv/bin/activate
-(.venv) $ pip install little-a2s
+# Linux/MacOS
+python3 -m pip install little-a2s
+
+# Windows
+py -m pip install little-a2s
+```
+
+To install the development version of the library (requires Git), you can download
+it from GitHub directly:
+
+```sh
+pip install git+https://github.com/thegamecracks/little-a2s
 ```
 
 ## Usage

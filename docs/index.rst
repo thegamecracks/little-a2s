@@ -38,13 +38,24 @@ A synchronous and sans-I/O library implementing the A2S Valve Source Query proto
 Installation
 ------------
 
-This project requires Python 3.11 or newer. Install it from PyPI by using pip:
+The minimum Python version required is **3.11**. No other dependencies are required.
+
+This package can be installed from PyPI using one of the following commands:
 
 .. code-block:: sh
 
-   $ python3 -m venv
-   $ .venv/bin/activate
-   (.venv) $ pip install little-a2s
+   # Linux/MacOS
+   python3 -m pip install little-a2s
+
+   # Windows
+   py -m pip install little-a2s
+
+To install the development version of the library (requires Git), you can download
+it from GitHub directly:
+
+.. code-block:: sh
+
+   pip install git+https://github.com/thegamecracks/little-a2s
 
 Table of Contents
 -----------------
