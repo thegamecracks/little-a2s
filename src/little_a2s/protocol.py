@@ -36,11 +36,16 @@ class MultiPartResponse:
     """A multi-part response waiting to be assembled."""
 
     id: int
+    """Unique number assigned by server per answer."""
     total: int
+    """The total number of packets in the response."""
     compressed: Compression | None
+    """An optional compression header. Mostly present in ~2006-era engines."""
     payloads: dict[int, bytes] = field(default_factory=dict)
+    """A sequenced mapping of payloads to be assembled."""
 
     def add(self, header: MultiAnyHeader, payload: bytes) -> None:
+        """Add a payload with the given header to the response."""
         if header.id != self.id:
             raise ValueError(f"Expected ID {self.id!r}, got {header.id!r}")
         elif header.total != self.total:
@@ -55,6 +60,7 @@ class MultiPartResponse:
         self.payloads[header.current] = payload
 
     def assemble(self) -> bytes | None:
+        """Assemble the payload together if all parts have been received."""
         if len(self.payloads) < self.total:
             return
 
