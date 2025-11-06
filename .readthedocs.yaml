@@ -17,4 +17,4 @@ build:
       - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv sync --cache-dir $READTHEDOCS_VIRTUALENV_PATH/../../uv_cache
     build:
       html:
-        - uv run -m sphinx -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
+        - uv run -m sphinx -T -b html -d _build/doctrees -D language=en docs $READTHEDOCS_OUTPUT/html
