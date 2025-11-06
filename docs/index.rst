@@ -35,16 +35,6 @@ A synchronous and sans-I/O library implementing the A2S Valve Source Query proto
        print(a2s.players())
        print(a2s.rules())
 
-Table of Contents
------------------
-
-.. toctree::
-   :maxdepth: 2
-
-   sync
-   protocol
-   async
-
 Installation
 ------------
 
@@ -55,3 +45,13 @@ This project requires Python 3.11 or newer. Install it from PyPI by using pip:
    $ python3 -m venv
    $ .venv/bin/activate
    (.venv) $ pip install little-a2s
+
+Table of Contents
+-----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sync
+   protocol
+   async
