@@ -17,7 +17,7 @@ class Arma3Rules:
     difficulty: Arma3Difficulty
     dlc_hashes: list[int]
     mods: list[Arma3Mod]
-    signatures: list[bytes]
+    signatures: list[str]
 
     @classmethod
     def from_rules(cls, rules: dict[bytes, bytes] | ClientEventRules) -> Self:
@@ -38,7 +38,7 @@ class Arma3Rules:
         mods = [Arma3Mod.from_reader(reader) for _ in range(n_mods)]
 
         n_signatures = reader.read_byte()
-        signatures = [reader.read_varchar1() for _ in range(n_signatures)]
+        signatures = [reader.read_varchar1().decode() for _ in range(n_signatures)]
 
         return cls(
             version=version,
