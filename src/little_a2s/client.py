@@ -47,6 +47,16 @@ def last(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None:
 class A2S:
     """A synchronous client for A2S queries.
 
+    ::
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(1)
+        sock.connect(("127.0.0.1", 27015))
+        with A2S(sock) as a2s:
+            print(a2s.info())
+            print(a2s.players())
+            print(a2s.rules())
+
     This follows the Source format. For the Goldsource equivalent,
     see :class:`A2SGoldsource`.
 
