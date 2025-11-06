@@ -19,6 +19,11 @@ with A2S.from_addr("example.com", 27015, timeout=1) as a2s:
     print(a2s.rules())
 ```
 
+Read the [documentation] or see the [examples] directory to get started!
+
+[documentation]: https://little-a2s.rtfd.io/
+[examples]: https://github.com/thegamecracks/little-a2s/tree/main/examples
+
 ## Installation
 
 The minimum Python version required is **3.11**. No other dependencies are required.
@@ -39,14 +44,6 @@ it from GitHub directly:
 ```sh
 pip install git+https://github.com/thegamecracks/little-a2s
 ```
-
-## Usage
-
-For now, see the [examples] directory for basic usage or the [documentation]
-for a complete API reference.
-
-[examples]: https://github.com/thegamecracks/little-a2s/tree/main/examples
-[documentation]: https://little-a2s.rtfd.io/
 
 ## License
 
