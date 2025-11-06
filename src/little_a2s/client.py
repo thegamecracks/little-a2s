@@ -1,4 +1,5 @@
 # import asyncio
+import logging
 import socket
 from contextlib import suppress
 from typing import Callable, Iterable, Iterator, Self, Type, TypeVar
@@ -18,6 +19,9 @@ DEFAULT_TIMEOUT = 3.0
 
 T = TypeVar("T")
 ClientEventT = TypeVar("ClientEventT", bound=ClientEvent)
+Address = tuple[str, int] | tuple[str, int, int, int] | tuple[int, bytes]
+
+log = logging.getLogger(__name__)
 
 
 def filter_type(
@@ -63,12 +67,16 @@ class A2S:
     This class supports the context manager protocol which automatically
     closes the socket upon exit.
 
+    This class is not thread-safe.
+
     :param sock:
         The UDP socket to send and receive queries from.
-        The socket **must** be connected to a remote address beforehand
-        with :meth:`~socket.socket.connect()`. You may also want to
+        The socket can be connected to a remote address beforehand
+        with :meth:`~socket.socket.connect()`, if you want to skip
+        ``addr=`` arguments in send methods. You may also want to
         set a timeout with :meth:`~socket.socket.settimeout()`.
-        Alternatively, use :meth:`from_addr()` to construct the socket for you.
+        Alternatively, use :meth:`from_addr()`, :meth:`from_ipv4()`,
+        or :meth:`from_ipv6()` to construct the socket for you.
     :param challenge:
         The initial challenge sequence to use for requests.
         This is optional if you close the socket and want to resume
@@ -78,15 +86,18 @@ class A2S:
     """
 
     buffer_size = 32768  # probably overkill?
-    _events: list[ClientEvent]
+    _protocols: dict[Address | None, A2SClientProtocol]
+    _events: dict[Address | None, list[ClientEvent]]
 
     def __init__(self, sock: socket.socket, *, challenge: int = -1) -> None:
         if sock.type != socket.SOCK_DGRAM:
             raise ValueError("Socket type must be SOCK_DGRAM")
 
+        self.challenge = challenge
+
         self._sock = sock
-        self._protocol = self._create_protocol(challenge=challenge)
-        self._events = []
+        self._protocols = {}
+        self._events = {}
 
     def __enter__(self) -> Self:
         self._sock.__enter__()
@@ -95,37 +106,61 @@ class A2S:
     def __exit__(self, exc_type, exc_val, tb) -> None:
         return self._sock.__exit__(exc_type, exc_val, tb)
 
-    def events_received(self) -> list[ClientEvent]:
-        """Purge all outstanding events not returned by other methods."""
-        events, self._events = self._events, []
+    def events_received(self, *, addr: Address | None = None) -> list[ClientEvent]:
+        """Purge all outstanding events not returned by other methods.
+
+        :param addr: The address to retrieve events from.
+
+        """
+        # NOTE: not thread-safe!
+        events = self._events.get(addr, [])
+        self._events[addr] = []
         return events
 
-    def info(self) -> ClientEventInfo:
+    def info(self, *, addr: Address | None = None) -> ClientEventInfo:
         """Send an A2S_INFO request and wait for a response.
 
+        :param addr:
+            The address to send the request to.
+            Does not apply if socket is already connected to an address,
+            such as from :meth:`from_addr()`.
+
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
 
         """
-        return self._send_until(ClientEventInfo, self._protocol.info)
+        proto = self._get_protocol(addr)
+        return self._send_until(ClientEventInfo, proto.info, addr=addr)
 
-    def players(self) -> ClientEventPlayers:
+    def players(self, *, addr: Address | None = None) -> ClientEventPlayers:
         """Send an A2S_PLAYER request and wait for a response.
 
+        :param addr:
+            The address to send the request to.
+            Does not apply if socket is already connected to an address,
+            such as from :meth:`from_addr()`.
+
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
 
         """
-        return self._send_until(ClientEventPlayers, self._protocol.players)
+        proto = self._get_protocol(addr)
+        return self._send_until(ClientEventPlayers, proto.players, addr=addr)
 
-    def rules(self) -> ClientEventRules:
+    def rules(self, *, addr: Address | None = None) -> ClientEventRules:
         """Send an A2S_RULES request and wait for a response.
 
+        :param addr:
+            The address to send the request to.
+            Does not apply if socket is already connected to an address,
+            such as from :meth:`from_addr()`.
+
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
 
         """
-        return self._send_until(ClientEventRules, self._protocol.rules)
+        proto = self._get_protocol(addr)
+        return self._send_until(ClientEventRules, proto.rules, addr=addr)
 
     @classmethod
     def from_addr(
@@ -169,6 +204,56 @@ class A2S:
         sock.connect(addr)
         return cls(sock)
 
+    @classmethod
+    def from_ipv4(cls, timeout: float | None = DEFAULT_TIMEOUT) -> Self:
+        """Create an A2S query with a UDP IPv4 socket not connected to any address.
+
+        This allows you to use the same socket with ``addr=`` arguments::
+
+            with A2S.from_ipv4() as a2s:
+                info = a2s.info(addr=("127.0.0.1", 2303))
+                info = a2s.info(addr=("127.0.0.1", 27015))
+
+        :param timeout: The timeout to set on the socket.
+
+        """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        sock.settimeout(timeout)
+        return cls(sock)
+
+    @classmethod
+    def from_ipv6(cls, timeout: float | None = DEFAULT_TIMEOUT) -> Self:
+        """Create an A2S query with a UDP IPv6 socket not connected to any address.
+
+        This allows you to use the same socket with ``addr=`` arguments::
+
+            with A2S.from_ipv6() as a2s:
+                info = a2s.info(addr=("::1", 2303))
+                info = a2s.info(addr=("::1", 27015))
+
+        :param timeout: The timeout to set on the socket.
+
+        """
+        sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        sock.settimeout(timeout)
+        return cls(sock)
+
+    def _get_protocol(self, addr: Address | None) -> A2SClientProtocol:
+        """Get the A2S protocol for the given address, creating a new one
+        if it doesn't already exist.
+
+        :param addr: The address to bind to, or None for the default protocol.
+
+        """
+        # NOTE: not thread-safe!
+        proto = self._protocols.get(addr)
+        if proto is not None:
+            return proto
+
+        proto = self._create_protocol(challenge=self.challenge)
+        self._protocols[addr] = proto
+        return proto
+
     def _create_protocol(self, *, challenge: int) -> A2SClientProtocol:
         """Create the A2S protocol to manage state.
 
@@ -181,6 +266,8 @@ class A2S:
         self,
         t: Type[ClientEventT],
         request: Callable[[], ClientPacket],
+        *,
+        addr: Address | None,
     ) -> ClientEventT:
         """Use the given request function to generate an outbound packet,
         and wait until the server responds with the given event type.
@@ -193,36 +280,53 @@ class A2S:
         :raises ValueError: The server sent a malformed packet.
 
         """
-        self._sock.send(bytes(request()))
+        self._send(bytes(request()), addr)
         types = (t, ClientEventChallenge)
         remaining = 3
 
-        while remaining > 0 and (events := list(filter_type(types, self._recv()))):
+        while remaining > 0 and (events := list(filter_type(types, self._recv(addr)))):
             # Protocol has already stored the latest challenge sequence,
             # but let's filter all of them out from the event cache.
             for challenge in filter_type(ClientEventChallenge, events):
-                self._discard(challenge)
+                self._discard(challenge, addr)
 
             if found := first(t, events):
-                self._discard(found)
+                self._discard(found, addr)
                 return found
 
-            self._sock.send(bytes(request()))
+            self._send(bytes(request()), addr)
             remaining -= 1
 
         raise TimeoutError(f"Server failed to respond with {t.__name__}")
 
-    def _recv(self) -> list[ClientEvent]:
+    def _send(self, data: bytes, addr: Address | None) -> int:
+        if addr is not None:
+            return self._sock.sendto(data, addr)
+        else:
+            return self._sock.send(data)
+
+    def _recv(self, addr: Address | None) -> list[ClientEvent]:
         """Read one datagram from the socket and pass it to the protocol.
 
+        If address is not None, this may call :meth:`~socket.socket.recvfrom()`
+        multiple times until a datagram from the given address is received.
+
+        :param addr: The address to wait for a datagram from.
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
 
         """
-        data = self._sock.recv(self.buffer_size)
-        return self._receive_datagram(data)
+        # NOTE: not thread-safe!
+        data, recv_addr = self._sock.recvfrom(self.buffer_size)
+        events = self._receive_datagram(data, addr and recv_addr)
 
-    def _receive_datagram(self, data: bytes) -> list[ClientEvent]:
+        while addr and addr != recv_addr:
+            data, recv_addr = self._sock.recvfrom(self.buffer_size)
+            events = self._receive_datagram(data, addr and recv_addr)
+
+        return events
+
+    def _receive_datagram(self, data: bytes, addr: Address | None) -> list[ClientEvent]:
         """Pass the datagram to the protocol and return any generated events.
 
         This also sends off any packets that the protocol returns back,
@@ -232,25 +336,31 @@ class A2S:
         :raises ValueError: The server sent a malformed packet.
 
         """
-        self._protocol.receive_datagram(data)
-        for packet in self._protocol.packets_to_send():
-            self._sock.send(bytes(packet))
+        proto = self._protocols.get(addr)
+        if proto is None:
+            log.debug("Ignoring data from unexpected address %s", addr)
+            return []
 
-        events = self._protocol.events_received()
-        self._events.extend(events)
+        proto.receive_datagram(data)
+        for packet in proto.packets_to_send():
+            self._send(bytes(packet), addr)
+
+        events = proto.events_received()
+        self._events.setdefault(addr, []).extend(events)
         return events
 
-    def _discard(self, event: ClientEvent) -> None:
+    def _discard(self, event: ClientEvent, addr: Address | None) -> None:
         """Discard an event from the cache, if present."""
         with suppress(ValueError):
-            self._events.remove(event)
+            self._events.setdefault(addr, []).remove(event)
 
 
 class A2SGoldsource(A2S):
     """A synchronous client for A2S Goldsource queries."""
 
-    def info(self) -> ClientEventGoldsourceInfo:  # type: ignore
-        return self._send_until(ClientEventGoldsourceInfo, self._protocol.info)
+    def info(self, *, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
+        proto = self._get_protocol(addr)
+        return self._send_until(ClientEventGoldsourceInfo, proto.info, addr=addr)
 
     def _create_protocol(self, *, challenge: int) -> A2SGoldsourceClientProtocol:
         return A2SGoldsourceClientProtocol(challenge=challenge)
