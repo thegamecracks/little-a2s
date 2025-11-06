@@ -44,3 +44,13 @@ from .protocol import (
     MultiPartResponse as MultiPartResponse,
 )
 from .reader import Readable as Readable, Reader as Reader
+
+
+def _get_version() -> str:
+    from importlib.metadata import version
+
+    return version(_dist_name)
+
+
+_dist_name = "little-a2s"
+__version__ = _get_version()
