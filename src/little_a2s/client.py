@@ -122,12 +122,19 @@ class A2S:
         host: str,
         port: int,
         timeout: float | None = DEFAULT_TIMEOUT,
+        *,
+        prefer_ipv4: bool = True,
     ) -> Self:
         """Resolve the given host and create an A2S query.
 
         :param host: The IPv4 address, IPv6 address, or domain name to query.
         :param port: The port to query.
         :param timeout: The timeout to set on the socket.
+        :param prefer_ipv4:
+            If True, prefer to resolve hostnames to IPv4 addresses.
+            This may still connect the socket to an IPv6 address so if you
+            need more control, consider using :func:`socket.getaddrinfo()`
+            to manually create a socket and pass it to the constructor.
         :raises OSError: The address could not be resolved.
 
         """
@@ -140,7 +147,12 @@ class A2S:
         if not addresses:
             raise OSError("Address could not be resolved")
 
-        family, type, proto, _, addr = addresses[0]
+        if prefer_ipv4:
+            addr = next((a for a in addresses if a[0] == socket.AF_INET), addresses[0])
+        else:
+            addr = addresses[0]
+
+        family, type, proto, _, addr = addr
         sock = socket.socket(family, type, proto)
         sock.settimeout(timeout)
         sock.connect(addr)
