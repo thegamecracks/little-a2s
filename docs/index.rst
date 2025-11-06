@@ -57,12 +57,19 @@ it from GitHub directly:
 
    pip install git+https://github.com/thegamecracks/little-a2s
 
-Table of Contents
------------------
+API Reference
+-------------
 
 .. toctree::
    :maxdepth: 2
 
    sync
    protocol
+
+Examples
+--------
+
+.. toctree::
+   :maxdepth: 2
+
    async
