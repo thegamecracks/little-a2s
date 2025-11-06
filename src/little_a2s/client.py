@@ -29,19 +29,31 @@ def filter_type(
     it: Iterable[object],
     /,
 ) -> Iterator[T]:
-    """Filter through an iterable for elements of the given type."""
+    """Filter through an iterable for elements of the given type.
+
+    .. versionadded:: 0.2.0
+
+    """
     for x in it:
         if isinstance(x, t):
             yield x
 
 
 def first(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None:
-    """Return the first element of the given type in an iterable."""
+    """Return the first element of the given type in an iterable.
+
+    .. versionadded:: 0.2.0
+
+    """
     return next(filter_type(t, it), None)
 
 
 def last(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None:
-    """Return the last element of the given type in an iterable."""
+    """Return the last element of the given type in an iterable.
+
+    .. versionadded:: 0.2.0
+
+    """
     x = None
     for x in filter_type(t, it):
         pass
@@ -82,6 +94,8 @@ class A2S:
         This is optional if you close the socket and want to resume
         sending queries shortly afterwards without an extra challenge
         response. However, the server may still challenge you regardless.
+
+    .. versionadded:: 0.2.0
 
     """
 
@@ -181,6 +195,8 @@ class A2S:
             This may still connect the socket to an IPv6 address so if you
             need more control, consider using :func:`socket.getaddrinfo()`
             to manually create a socket and pass it to the constructor.
+
+            .. versionadded:: 0.2.1
         :raises OSError: The address could not be resolved.
 
         """

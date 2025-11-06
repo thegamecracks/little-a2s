@@ -15,6 +15,8 @@ class Arma3Rules:
 
     Reference: https://community.bistudio.com/wiki/Arma_3:_ServerBrowserProtocol3
 
+    .. versionadded:: 0.3.0
+
     """
 
     version: int
@@ -117,6 +119,8 @@ class Arma3DLC(IntFlag):
 
     Some bits may be set that aren't part of this flag's members, up to 0xFFFF.
 
+    .. versionadded:: 0.3.0
+
     """
 
     KART = 0x1
@@ -136,6 +140,12 @@ class Arma3DLC(IntFlag):
 
 @dataclass(kw_only=True)
 class Arma3Difficulty:
+    """The difficulty options defined by the server.
+
+    .. versionadded:: 0.3.0
+
+    """
+
     difficulty: int
     """The difficulty level, usually between 0-3."""
     skill: int
@@ -162,7 +172,11 @@ class Arma3Difficulty:
 
 @dataclass(kw_only=True)
 class Arma3Mod:
-    """A mod required by the server."""
+    """A mod required by the server.
+
+    .. versionadded:: 0.3.0
+
+    """
 
     hash: int
     """The 32-bit hash of that mod."""

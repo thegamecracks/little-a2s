@@ -33,7 +33,13 @@ log = logging.getLogger(__name__)
 
 @dataclass(kw_only=True)
 class MultiPartResponse:
-    """A multi-part response waiting to be assembled."""
+    """A multi-part response waiting to be assembled.
+
+    .. versionchanged:: 0.2.0
+
+        Removed the ``current`` attribute.
+
+    """
 
     id: int
     """Unique number assigned by server per answer."""
@@ -295,7 +301,13 @@ class A2SClientProtocol:
 
 
 class A2SGoldsourceClientProtocol(A2SClientProtocol):
-    """The Goldsource variant of the A2S client protocol used by older games."""
+    """The Goldsource variant of the A2S client protocol used by older games.
+
+    .. versionchanged:: 0.2.0
+
+        Renamed to A2SGoldsourceClientProtocol from A2SClientGoldsourceProtocol.
+
+    """
 
     def _parse_multi_header(self, reader: Reader) -> Header:
         id = reader.read_ulong()
