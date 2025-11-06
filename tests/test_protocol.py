@@ -5,12 +5,14 @@ from little_a2s.events import (
     ClientEventGoldsourceInfo,
     ClientEventInfo,
     ClientEventPlayers,
+    ClientEventRules,
 )
 from tests.constants import (
     A2S_INFO_COUNTERSTRIKE_SOURCE,
     A2S_INFO_GOLDSOURCE_COUNTERSTRIKE,
     A2S_INFO_SIN1_MP,
     A2S_PLAYER,
+    A2S_RULES_PROJECT_ZOMBOID,
     S2C_CHALLENGE,
 )
 
@@ -22,6 +24,7 @@ def test_single_packets() -> None:
     source.receive_datagram(A2S_INFO_GOLDSOURCE_COUNTERSTRIKE)
     source.receive_datagram(A2S_INFO_SIN1_MP)
     source.receive_datagram(A2S_PLAYER)
+    source.receive_datagram(A2S_RULES_PROJECT_ZOMBOID)
 
     events = source.events_received()
     assert isinstance(events[0], ClientEventChallenge)
@@ -29,7 +32,8 @@ def test_single_packets() -> None:
     assert isinstance(events[2], ClientEventGoldsourceInfo)
     assert isinstance(events[3], ClientEventInfo)
     assert isinstance(events[4], ClientEventPlayers)
-    assert len(events) == 5
+    assert isinstance(events[5], ClientEventRules)
+    assert len(events) == 6
 
     assert source.events_received() == []
     assert source.packets_to_send() == []
