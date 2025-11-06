@@ -320,7 +320,7 @@ class A2S:
         data, recv_addr = self._sock.recvfrom(self.buffer_size)
         events = self._receive_datagram(data, addr and recv_addr)
 
-        while addr and addr != recv_addr:
+        while not events or addr and addr != recv_addr:
             data, recv_addr = self._sock.recvfrom(self.buffer_size)
             events = self._receive_datagram(data, addr and recv_addr)
 
