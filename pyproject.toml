@@ -5,7 +5,7 @@ build-backend = "uv_build"
 [project]
 name = "little-a2s"
 version = "0.2.0"
-description = "A sans-I/O library implementing the A2S Valve Source Query protocol."
+description = "A synchronous and sans-I/O library implementing the A2S Valve Source Query protocol."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
