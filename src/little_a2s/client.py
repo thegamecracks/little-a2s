@@ -60,8 +60,9 @@ class A2S:
         See also :meth:`from_addr()`.
     :param challenge:
         The initial challenge sequence to use for requests.
-        This is only needed if you close the socket and need
-        to resume sending queries again.
+        This is optional if you close the socket and want to resume
+        sending queries shortly afterwards without an extra challenge
+        response. However, the server may still challenge you regardless.
 
     """
 
