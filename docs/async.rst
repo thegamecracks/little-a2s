@@ -1,16 +1,18 @@
 Asynchronous Usage
 ==================
 
-This page is a stub for a future asynchronous I/O client. While the library
-doesn't currently provide its own asyncio implementation, we do have an example
-of how to use little-a2s with asyncio by implementing your own `datagram protocol`_.
-You can also integrate the little-a2s protocol (see :doc:`/protocol`) with other
-networking libraries such as `Trio`_, `anyio`_, and `gevent`_.
+While the library doesn't provide its own native asyncio implementation yet,
+you can use the :doc:`Sans-I/O interface </protocol>` to build your own
+`datagram protocol`_ that provides async / await capability.
+You can also integrate the little-a2s protocol with other networking libraries
+such as `Trio`_, `anyio`_, and `gevent`_.
 
 .. _datagram protocol: https://docs.python.org/3/library/asyncio-protocol.html
 .. _Trio: https://trio.readthedocs.io/
 .. _anyio: https://anyio.readthedocs.io/
 .. _gevent: https://www.gevent.org/
+
+Below is an exmaple of how to create your own asyncio protocol and use it:
 
 .. code-block:: python
     :caption: async_protocol.py
