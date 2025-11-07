@@ -3,6 +3,7 @@ import socket
 from contextlib import suppress
 from typing import Callable, Self, Type
 
+from little_a2s.client.constants import DEFAULT_TIMEOUT
 from little_a2s.client.types import Address, ClientEventT, filter_type, first
 from little_a2s.events import (
     ClientEvent,
@@ -14,8 +15,6 @@ from little_a2s.events import (
 )
 from little_a2s.packets import ClientPacket
 from little_a2s.protocol import A2SClientProtocol, A2SGoldsourceClientProtocol
-
-DEFAULT_TIMEOUT = 3.0
 
 log = logging.getLogger(__name__)
 
