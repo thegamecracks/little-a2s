@@ -1,6 +1,8 @@
 from .client import (
     A2S as A2S,
     A2SGoldsource as A2SGoldsource,
+    AsyncA2S as AsyncA2S,
+    AsyncA2SGoldsource as AsyncA2SGoldsource,
     filter_type as filter_type,
     first as first,
     last as last,
