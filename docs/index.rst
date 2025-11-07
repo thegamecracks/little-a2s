@@ -69,13 +69,6 @@ API Reference
    :maxdepth: 2
 
    sync
+   async
    protocol
    rules
-
-Examples
---------
-
-.. toctree::
-   :maxdepth: 2
-
-   async
