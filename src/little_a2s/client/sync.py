@@ -80,6 +80,10 @@ class A2S:
     def info(self, addr: Address | None = None) -> ClientEventInfo:
         """Send an A2S_INFO request and wait for a response.
 
+        .. versionchanged:: 0.5.0
+
+            addr can now be a positional argument.
+
         :param addr:
             The address to send the request to.
             Does not apply if socket is already connected to an address,
@@ -97,6 +101,10 @@ class A2S:
     def players(self, addr: Address | None = None) -> ClientEventPlayers:
         """Send an A2S_PLAYER request and wait for a response.
 
+        .. versionchanged:: 0.5.0
+
+            addr can now be a positional argument.
+
         :param addr:
             The address to send the request to.
             Does not apply if socket is already connected to an address,
@@ -113,6 +121,10 @@ class A2S:
 
     def rules(self, addr: Address | None = None) -> ClientEventRules:
         """Send an A2S_RULES request and wait for a response.
+
+        .. versionchanged:: 0.5.0
+
+            addr can now be a positional argument.
 
         :param addr:
             The address to send the request to.
