@@ -1,8 +1,9 @@
 import logging
 import socket
 from contextlib import suppress
-from typing import Callable, Iterable, Iterator, Self, Type, TypeVar
+from typing import Callable, Self, Type, TypeVar
 
+from little_a2s.client.types import filter_type, first
 from little_a2s.events import (
     ClientEvent,
     ClientEventChallenge,
@@ -16,47 +17,10 @@ from little_a2s.protocol import A2SClientProtocol, A2SGoldsourceClientProtocol
 
 DEFAULT_TIMEOUT = 3.0
 
-T = TypeVar("T")
 ClientEventT = TypeVar("ClientEventT", bound=ClientEvent)
 Address = tuple[str, int] | tuple[str, int, int, int] | tuple[int, bytes]
 
 log = logging.getLogger(__name__)
-
-
-def filter_type(
-    t: Type[T] | tuple[Type[T], ...],
-    it: Iterable[object],
-    /,
-) -> Iterator[T]:
-    """Filter through an iterable for elements of the given type.
-
-    .. versionadded:: 0.2.0
-
-    """
-    for x in it:
-        if isinstance(x, t):
-            yield x
-
-
-def first(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None:
-    """Return the first element of the given type in an iterable.
-
-    .. versionadded:: 0.2.0
-
-    """
-    return next(filter_type(t, it), None)
-
-
-def last(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None:
-    """Return the last element of the given type in an iterable.
-
-    .. versionadded:: 0.2.0
-
-    """
-    x = None
-    for x in filter_type(t, it):
-        pass
-    return x
 
 
 class A2S:
