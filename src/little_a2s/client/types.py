@@ -1,5 +1,6 @@
 from typing import Iterable, Iterator, Type, TypeVar
 
+Address = tuple[str, int] | tuple[str, int, int, int] | tuple[int, bytes]
 T = TypeVar("T")
 
 

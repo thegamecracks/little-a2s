@@ -3,7 +3,7 @@ import socket
 from contextlib import suppress
 from typing import Callable, Self, Type, TypeVar
 
-from little_a2s.client.types import filter_type, first
+from little_a2s.client.types import Address, filter_type, first
 from little_a2s.events import (
     ClientEvent,
     ClientEventChallenge,
@@ -18,7 +18,6 @@ from little_a2s.protocol import A2SClientProtocol, A2SGoldsourceClientProtocol
 DEFAULT_TIMEOUT = 3.0
 
 ClientEventT = TypeVar("ClientEventT", bound=ClientEvent)
-Address = tuple[str, int] | tuple[str, int, int, int] | tuple[int, bytes]
 
 log = logging.getLogger(__name__)
 
