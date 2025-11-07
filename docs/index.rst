@@ -28,12 +28,17 @@ A synchronous and sans-I/O library implementing the A2S Valve Source Query proto
 
 .. code-block:: python
 
-   from little_a2s import A2S
+   from little_a2s import A2S, AsyncA2S
 
    with A2S.from_addr("example.com", 27015, timeout=1) as a2s:
        print(a2s.info())
        print(a2s.players())
        print(a2s.rules())
+
+   async with AsyncA2S.from_ipv4() as a2s:
+       info    = await a2s.info(addr=("127.0.0.1", 27015))
+       players = await a2s.players(addr=("127.0.0.1", 27015))
+       rules   = await a2s.rules(addr=("127.0.0.1", 27015))
 
 Installation
 ------------
