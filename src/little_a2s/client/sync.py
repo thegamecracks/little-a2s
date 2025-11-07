@@ -306,9 +306,6 @@ class A2S:
     def _receive_datagram(self, data: bytes, addr: Address | None) -> list[ClientEvent]:
         """Pass the datagram to the protocol and return any generated events.
 
-        This also sends off any packets that the protocol returns back,
-        and stores the events in a local cache for :meth:`events_received()`.
-
         :raises TimeoutError: The socket timed out.
         :raises ValueError: The server sent a malformed packet.
 
