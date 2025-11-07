@@ -1,11 +1,11 @@
 Game-Specific Rules
 ===================
 
+.. versionadded:: 0.3.0
+
 This provides a few classes for parsing some game-specific rules, in particular
 Arma 3 and its relatives like DayZ, which uses the A2S_RULES response to send
 a binarized list of game details, mods, and signatures.
-
-.. versionadded:: 0.3.0
 
 Arma 3
 ------
