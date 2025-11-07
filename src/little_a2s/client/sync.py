@@ -48,13 +48,12 @@ class A2S:
         set a timeout with :meth:`~socket.socket.settimeout()`.
         Alternatively, use :meth:`from_addr()`, :meth:`from_ipv4()`,
         or :meth:`from_ipv6()` to construct the socket for you.
-    :param challenge:
-        The initial challenge sequence to use for requests.
-        This is optional if you close the socket and want to resume
-        sending queries shortly afterwards without an extra challenge
-        response. However, the server may still challenge you regardless.
 
     .. versionadded:: 0.2.0
+
+    .. versionchanged:: 0.5.0
+
+        Removed the ``challenge=`` parameter.
 
     """
 
@@ -62,11 +61,9 @@ class A2S:
     _protocols: dict[Address | None, A2SClientProtocol]
     _events: dict[Address | None, list[ClientEvent]]
 
-    def __init__(self, sock: socket.socket, *, challenge: int = -1) -> None:
+    def __init__(self, sock: socket.socket) -> None:
         if sock.type != socket.SOCK_DGRAM:
             raise ValueError("Socket type must be SOCK_DGRAM")
-
-        self.challenge = challenge
 
         self._sock = sock
         self._protocols = {}
@@ -238,17 +235,17 @@ class A2S:
         if proto is not None:
             return proto
 
-        proto = self._create_protocol(challenge=self.challenge)
+        proto = self._create_protocol()
         self._protocols[addr] = proto
         return proto
 
-    def _create_protocol(self, *, challenge: int) -> A2SClientProtocol:
+    def _create_protocol(self) -> A2SClientProtocol:
         """Create the A2S protocol to manage state.
 
         This method can be overridden by subclasses.
 
         """
-        return A2SClientProtocol(challenge=challenge)
+        return A2SClientProtocol()
 
     def _send_until(
         self,
@@ -349,5 +346,5 @@ class A2SGoldsource(A2S):
         proto = self._get_protocol(addr)
         return self._send_until(ClientEventGoldsourceInfo, proto.info, addr)
 
-    def _create_protocol(self, *, challenge: int) -> A2SGoldsourceClientProtocol:
-        return A2SGoldsourceClientProtocol(challenge=challenge)
+    def _create_protocol(self) -> A2SGoldsourceClientProtocol:
+        return A2SGoldsourceClientProtocol()
