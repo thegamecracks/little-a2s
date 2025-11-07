@@ -1,7 +1,10 @@
 from typing import Iterable, Iterator, Type, TypeVar
 
+from little_a2s.events import ClientEvent
+
 Address = tuple[str, int] | tuple[str, int, int, int] | tuple[int, bytes]
 T = TypeVar("T")
+ClientEventT = TypeVar("ClientEventT", bound=ClientEvent)
 
 
 def filter_type(
