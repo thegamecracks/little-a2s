@@ -14,6 +14,7 @@ the :doc:`Sans-I/O interface </protocol>` to build your own client.
 .. versionadded:: 0.5.0
 
 .. autoclass:: little_a2s.AsyncA2S
+   :exclude-members: connection_made, connection_lost, datagram_received
    :no-inherited-members:
 .. autoclass:: little_a2s.AsyncA2SGoldsource
    :no-inherited-members:
