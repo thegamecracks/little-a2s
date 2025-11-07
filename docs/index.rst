@@ -24,7 +24,7 @@ little-a2s documentation
 .. |ruff-format| image:: https://img.shields.io/github/actions/workflow/status/thegamecracks/little-a2s/ruff-format.yml?style=flat-square&logo=ruff&label=style
    :target: https://docs.astral.sh/ruff/
 
-A synchronous and sans-I/O library implementing the A2S Valve Source Query protocol.
+A sync + async + sans-I/O library for the Valve Source Query (A2S) protocol.
 
 .. code-block:: python
 

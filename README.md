@@ -8,7 +8,7 @@
 [![](https://img.shields.io/github/actions/workflow/status/thegamecracks/little-a2s/ruff-check.yml?style=flat-square&logo=ruff&label=lints)](https://docs.astral.sh/ruff/)
 [![](https://img.shields.io/github/actions/workflow/status/thegamecracks/little-a2s/ruff-format.yml?style=flat-square&logo=ruff&label=style)](https://docs.astral.sh/ruff/)
 
-A synchronous and sans-I/O library implementing the A2S Valve Source Query protocol.
+A sync + async + sans-I/O library for the Valve Source Query (A2S) protocol.
 
 ```py
 from little_a2s import A2S, AsyncA2S
