@@ -37,9 +37,9 @@ A sync + async + sans-I/O library for the Valve Source Query (A2S) protocol.
 
    addr = ("127.0.0.1", 27015)
    async with AsyncA2S.from_ipv4() as a2s, asyncio.timeout(1):
-       info = await a2s.info(addr=addr)
-       players = await a2s.players(addr=addr)
-       rules = await a2s.rules(addr=addr)
+       info = await a2s.info(addr)
+       players = await a2s.players(addr)
+       rules = await a2s.rules(addr)
 
 Installation
 ------------

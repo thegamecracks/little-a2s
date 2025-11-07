@@ -182,11 +182,11 @@ class AsyncA2S(asyncio.DatagramProtocol):
     def from_ipv4(cls) -> Self:
         """Create an A2S query with a UDP IPv4 socket not connected to any address.
 
-        This allows you to use the same socket with ``addr=`` arguments::
+        This allows you to use the same socket with ``addr`` arguments::
 
             async with AsyncA2S.from_ipv4() as a2s, asyncio.timeout(1):
-                info = await a2s.info(addr=("127.0.0.1", 2303))
-                info = await a2s.info(addr=("127.0.0.1", 27015))
+                info = await a2s.info(("127.0.0.1", 2303))
+                info = await a2s.info(("127.0.0.1", 27015))
 
         """
         connector = partial(cls._connect_from_family, family=socket.AF_INET)
@@ -196,11 +196,11 @@ class AsyncA2S(asyncio.DatagramProtocol):
     def from_ipv6(cls) -> Self:
         """Create an A2S query with a UDP IPv6 socket not connected to any address.
 
-        This allows you to use the same socket with ``addr=`` arguments::
+        This allows you to use the same socket with ``addr`` arguments::
 
             async with AsyncA2S.from_ipv6() as a2s, asyncio.timeout(1):
-                info = await a2s.info(addr=("::1", 2303))
-                info = await a2s.info(addr=("::1", 27015))
+                info = await a2s.info(("::1", 2303))
+                info = await a2s.info(("::1", 27015))
 
         """
         connector = partial(cls._connect_from_family, family=socket.AF_INET6)
@@ -217,7 +217,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
     # Request methods
 
-    async def info(self, *, addr: Address | None = None) -> ClientEventInfo:
+    async def info(self, addr: Address | None = None) -> ClientEventInfo:
         """Send an A2S_INFO request and wait for a response.
 
         :param addr:
@@ -226,7 +226,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             such as from :meth:`from_addr()`.
 
         :raises TimeoutError: The server did not respond.
-        :raises TypeError: The addr= argument was required or forbidden.
+        :raises TypeError: The addr argument was required or forbidden.
         :raises ValueError: The server sent a malformed packet.
 
         """
@@ -234,7 +234,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
         proto = self._get_protocol(addr)
         return await self._send(ClientEventInfo, addr, proto.info)
 
-    async def players(self, *, addr: Address | None = None) -> ClientEventPlayers:
+    async def players(self, addr: Address | None = None) -> ClientEventPlayers:
         """Send an A2S_PLAYER request and wait for a response.
 
         :param addr:
@@ -243,7 +243,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             such as from :meth:`from_addr()`.
 
         :raises TimeoutError: The server did not respond.
-        :raises TypeError: The addr= argument was required or forbidden.
+        :raises TypeError: The addr argument was required or forbidden.
         :raises ValueError: The server sent a malformed packet.
 
         """
@@ -251,7 +251,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
         proto = self._get_protocol(addr)
         return await self._send(ClientEventPlayers, addr, proto.players)
 
-    async def rules(self, *, addr: Address | None = None) -> ClientEventRules:
+    async def rules(self, addr: Address | None = None) -> ClientEventRules:
         """Send an A2S_RULES request and wait for a response.
 
         :param addr:
@@ -260,7 +260,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             such as from :meth:`from_addr()`.
 
         :raises TimeoutError: The server did not respond.
-        :raises TypeError: The addr= argument was required or forbidden.
+        :raises TypeError: The addr argument was required or forbidden.
         :raises ValueError: The server sent a malformed packet.
 
         """
@@ -383,7 +383,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
 class AsyncA2SGoldsource(AsyncA2S):
     """A asynchronous client for A2S Goldsource queries."""
 
-    async def info(self, *, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
+    async def info(self, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
         addr = self._get_addr(addr)
         proto = self._get_protocol(addr)
         return await self._send(ClientEventGoldsourceInfo, addr, proto.info)

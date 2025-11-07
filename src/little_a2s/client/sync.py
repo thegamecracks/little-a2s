@@ -44,7 +44,7 @@ class A2S:
         The UDP socket to send and receive queries from.
         The socket can be connected to a remote address beforehand
         with :meth:`~socket.socket.connect()`, if you want to skip
-        ``addr=`` arguments in send methods. You may also want to
+        ``addr`` arguments in send methods. You may also want to
         set a timeout with :meth:`~socket.socket.settimeout()`.
         Alternatively, use :meth:`from_addr()`, :meth:`from_ipv4()`,
         or :meth:`from_ipv6()` to construct the socket for you.
@@ -79,7 +79,7 @@ class A2S:
     def __exit__(self, exc_type, exc_val, tb) -> None:
         return self._sock.__exit__(exc_type, exc_val, tb)
 
-    def events_received(self, *, addr: Address | None = None) -> list[ClientEvent]:
+    def events_received(self, addr: Address | None = None) -> list[ClientEvent]:
         """Purge all outstanding events not returned by other methods.
 
         :param addr:
@@ -93,7 +93,7 @@ class A2S:
         self._events[addr] = []
         return events
 
-    def info(self, *, addr: Address | None = None) -> ClientEventInfo:
+    def info(self, addr: Address | None = None) -> ClientEventInfo:
         """Send an A2S_INFO request and wait for a response.
 
         :param addr:
@@ -108,9 +108,9 @@ class A2S:
 
         """
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventInfo, proto.info, addr=addr)
+        return self._send_until(ClientEventInfo, proto.info, addr)
 
-    def players(self, *, addr: Address | None = None) -> ClientEventPlayers:
+    def players(self, addr: Address | None = None) -> ClientEventPlayers:
         """Send an A2S_PLAYER request and wait for a response.
 
         :param addr:
@@ -125,9 +125,9 @@ class A2S:
 
         """
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventPlayers, proto.players, addr=addr)
+        return self._send_until(ClientEventPlayers, proto.players, addr)
 
-    def rules(self, *, addr: Address | None = None) -> ClientEventRules:
+    def rules(self, addr: Address | None = None) -> ClientEventRules:
         """Send an A2S_RULES request and wait for a response.
 
         :param addr:
@@ -142,7 +142,7 @@ class A2S:
 
         """
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventRules, proto.rules, addr=addr)
+        return self._send_until(ClientEventRules, proto.rules, addr)
 
     @classmethod
     def from_addr(
@@ -192,11 +192,11 @@ class A2S:
     def from_ipv4(cls, timeout: float | None = DEFAULT_TIMEOUT) -> Self:
         """Create an A2S query with a UDP IPv4 socket not connected to any address.
 
-        This allows you to use the same socket with ``addr=`` arguments::
+        This allows you to use the same socket with ``addr`` arguments::
 
             with A2S.from_ipv4() as a2s:
-                info = a2s.info(addr=("127.0.0.1", 2303))
-                info = a2s.info(addr=("127.0.0.1", 27015))
+                info = a2s.info(("127.0.0.1", 2303))
+                info = a2s.info(("127.0.0.1", 27015))
 
         :param timeout: The timeout to set on the socket.
 
@@ -211,11 +211,11 @@ class A2S:
     def from_ipv6(cls, timeout: float | None = DEFAULT_TIMEOUT) -> Self:
         """Create an A2S query with a UDP IPv6 socket not connected to any address.
 
-        This allows you to use the same socket with ``addr=`` arguments::
+        This allows you to use the same socket with ``addr`` arguments::
 
             with A2S.from_ipv6() as a2s:
-                info = a2s.info(addr=("::1", 2303))
-                info = a2s.info(addr=("::1", 27015))
+                info = a2s.info(("::1", 2303))
+                info = a2s.info(("::1", 27015))
 
         :param timeout: The timeout to set on the socket.
 
@@ -254,7 +254,6 @@ class A2S:
         self,
         t: Type[ClientEventT],
         request: Callable[[], ClientPacket],
-        *,
         addr: Address | None,
     ) -> ClientEventT:
         """Use the given request function to generate an outbound packet,
@@ -346,9 +345,9 @@ class A2S:
 class A2SGoldsource(A2S):
     """A synchronous client for A2S Goldsource queries."""
 
-    def info(self, *, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
+    def info(self, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventGoldsourceInfo, proto.info, addr=addr)
+        return self._send_until(ClientEventGoldsourceInfo, proto.info, addr)
 
     def _create_protocol(self, *, challenge: int) -> A2SGoldsourceClientProtocol:
         return A2SGoldsourceClientProtocol(challenge=challenge)
