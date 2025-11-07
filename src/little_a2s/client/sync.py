@@ -1,6 +1,5 @@
 import logging
 import socket
-from contextlib import suppress
 from typing import Callable, Self, Type
 
 from little_a2s.client.constants import DEFAULT_TIMEOUT
@@ -55,11 +54,14 @@ class A2S:
 
         Removed the ``challenge=`` parameter.
 
+    .. versionchanged:: 0.5.0
+
+        Removed the ``events_received()`` method.
+
     """
 
     buffer_size = 32768  # probably overkill?
     _protocols: dict[Address | None, A2SClientProtocol]
-    _events: dict[Address | None, list[ClientEvent]]
 
     def __init__(self, sock: socket.socket) -> None:
         if sock.type != socket.SOCK_DGRAM:
@@ -67,7 +69,6 @@ class A2S:
 
         self._sock = sock
         self._protocols = {}
-        self._events = {}
 
     def __enter__(self) -> Self:
         self._sock.__enter__()
@@ -75,20 +76,6 @@ class A2S:
 
     def __exit__(self, exc_type, exc_val, tb) -> None:
         return self._sock.__exit__(exc_type, exc_val, tb)
-
-    def events_received(self, addr: Address | None = None) -> list[ClientEvent]:
-        """Purge all outstanding events not returned by other methods.
-
-        :param addr:
-            The address to retrieve events from.
-
-            .. versionadded:: 0.4.0
-
-        """
-        # NOTE: not thread-safe!
-        events = self._events.get(addr, [])
-        self._events[addr] = []
-        return events
 
     def info(self, addr: Address | None = None) -> ClientEventInfo:
         """Send an A2S_INFO request and wait for a response.
@@ -269,13 +256,7 @@ class A2S:
         remaining = 3
 
         while remaining > 0 and (events := list(filter_type(types, self._recv(addr)))):
-            # Protocol has already stored the latest challenge sequence,
-            # but let's filter all of them out from the event cache.
-            for challenge in filter_type(ClientEventChallenge, events):
-                self._discard(challenge, addr)
-
             if found := first(t, events):
-                self._discard(found, addr)
                 return found
 
             self._send(bytes(request()), addr)
@@ -329,14 +310,7 @@ class A2S:
         for packet in proto.packets_to_send():
             self._send(bytes(packet), addr)
 
-        events = proto.events_received()
-        self._events.setdefault(addr, []).extend(events)
-        return events
-
-    def _discard(self, event: ClientEvent, addr: Address | None) -> None:
-        """Discard an event from the cache, if present."""
-        with suppress(ValueError):
-            self._events.setdefault(addr, []).remove(event)
+        return proto.events_received()
 
 
 class A2SGoldsource(A2S):
