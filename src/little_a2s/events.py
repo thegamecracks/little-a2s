@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import Self, SupportsIndex, overload
@@ -355,7 +355,7 @@ class ClientEventPlayers(ClientEvent, Sequence[Player]):
 
 
 @dataclass(kw_only=True)
-class ClientEventRules(ClientEvent):
+class ClientEventRules(ClientEvent, Mapping[bytes, bytes]):
     """An A2S_RULES client protocol event."""
 
     rules: dict[bytes, bytes]
@@ -382,6 +382,27 @@ class ClientEventRules(ClientEvent):
             rules[name] = value
 
         return cls(rules=rules)
+
+    def __contains__(self, item):
+        return item in self.rules
+
+    def __getitem__(self, index):
+        return self.rules[index]
+
+    def __iter__(self):
+        yield from self.rules
+
+    def __len__(self):
+        return len(self.rules)
+
+    def keys(self):
+        return self.rules.keys()
+
+    def items(self):
+        return self.rules.items()
+
+    def values(self):
+        return self.rules.values()
 
 
 @dataclass(kw_only=True)
