@@ -27,7 +27,8 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
     ::
 
-        async with AsyncA2S.from_addr("127.0.0.1", 27015, timeout=1) as a2s:
+        a2s = AsyncA2S.from_addr("127.0.0.1", 27015)
+        async with a2s, asyncio.timeout(1):
             print(await a2s.info())
             print(await a2s.players())
             print(await a2s.rules())
@@ -183,7 +184,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
         This allows you to use the same socket with ``addr=`` arguments::
 
-            async with AsyncA2S.from_ipv4() as a2s:
+            async with AsyncA2S.from_ipv4() as a2s, asyncio.timeout(1):
                 info = await a2s.info(addr=("127.0.0.1", 2303))
                 info = await a2s.info(addr=("127.0.0.1", 27015))
 
@@ -197,7 +198,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
         This allows you to use the same socket with ``addr=`` arguments::
 
-            async with AsyncA2S.from_ipv6() as a2s:
+            async with AsyncA2S.from_ipv6() as a2s, asyncio.timeout(1):
                 info = await a2s.info(addr=("::1", 2303))
                 info = await a2s.info(addr=("::1", 27015))
 
