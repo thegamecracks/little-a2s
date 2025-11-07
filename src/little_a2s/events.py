@@ -317,7 +317,14 @@ class ClientEventGoldsourceInfo(ClientEvent):
 
 @dataclass(kw_only=True)
 class ClientEventPlayers(ClientEvent, Sequence[Player]):
-    """An A2S_PLAYER client protocol event."""
+    """An A2S_PLAYER client protocol event.
+
+    .. versionchanged:: 0.5.1
+
+        Added support for the sequence protocol to interact with
+        the underlying list of players.
+
+    """
 
     players: list[Player]
     """List of players whose information was gathered."""
@@ -356,7 +363,14 @@ class ClientEventPlayers(ClientEvent, Sequence[Player]):
 
 @dataclass(kw_only=True)
 class ClientEventRules(ClientEvent, Mapping[bytes, bytes]):
-    """An A2S_RULES client protocol event."""
+    """An A2S_RULES client protocol event.
+
+    .. versionchanged:: 0.5.1
+
+        Added support for the mapping protocol to interact with
+        the underlying dictionary of rules.
+
+    """
 
     rules: dict[bytes, bytes]
     """The server rules or configuration variables.
