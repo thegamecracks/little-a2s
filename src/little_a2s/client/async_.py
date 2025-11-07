@@ -35,8 +35,9 @@ class AsyncA2S(asyncio.DatagramProtocol):
     This follows the Source format. For the Goldsource equivalent,
     see :class:`AsyncA2SGoldsource`.
 
-    This class supports the asynchronous context manager protocol
-    which automatically closes the transport upon exit.
+    This class supports the asynchronous context manager protocol which calls
+    the connector function to set the transport + remote address, and closes
+    the transport upon exit.
 
     :param connector:
         The function to call and await to create a datagram transport
