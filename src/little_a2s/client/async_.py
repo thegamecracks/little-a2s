@@ -378,6 +378,8 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
 
 class AsyncA2SGoldsource(AsyncA2S):
+    """A asynchronous client for A2S Goldsource queries."""
+
     async def info(self, *, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
         addr = self._get_addr(addr)
         proto = self._get_protocol(addr)
