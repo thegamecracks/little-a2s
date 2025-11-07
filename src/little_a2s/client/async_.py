@@ -225,7 +225,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
-        :raises TimeoutError: The socket timed out.
+        :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr= argument was required or forbidden.
         :raises ValueError: The server sent a malformed packet.
 
@@ -242,7 +242,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
-        :raises TimeoutError: The socket timed out.
+        :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr= argument was required or forbidden.
         :raises ValueError: The server sent a malformed packet.
 
@@ -259,7 +259,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
-        :raises TimeoutError: The socket timed out.
+        :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr= argument was required or forbidden.
         :raises ValueError: The server sent a malformed packet.
 
@@ -358,6 +358,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             if event is not None:
                 return event
 
+        # FIXME: not really a timeout, should use a custom exception
         raise TimeoutError(f"Server failed to respond with {t.__name__}")
 
     @asynccontextmanager
