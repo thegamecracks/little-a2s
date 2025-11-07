@@ -268,7 +268,7 @@ class A2S:
         remaining = 3
 
         while remaining > 0 and (events := list(filter_type(types, self._recv(addr)))):
-            if found := first(t, events):
+            if (found := first(t, events)) is not None:
                 return found
 
             self._send(bytes(request()), addr)
