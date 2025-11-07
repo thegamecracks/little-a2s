@@ -1,6 +1,7 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import Self
+from typing import Self, SupportsIndex, overload
 
 from little_a2s.enums import _EnumReprMixin
 from little_a2s.reader import Reader
@@ -315,7 +316,7 @@ class ClientEventGoldsourceInfo(ClientEvent):
 
 
 @dataclass(kw_only=True)
-class ClientEventPlayers(ClientEvent):
+class ClientEventPlayers(ClientEvent, Sequence[Player]):
     """An A2S_PLAYER client protocol event."""
 
     players: list[Player]
@@ -335,6 +336,22 @@ class ClientEventPlayers(ClientEvent):
             players.append(player)
 
         return cls(players=players)
+
+    def __contains__(self, item):
+        return item in self.players
+
+    @overload
+    def __getitem__(self, index: SupportsIndex) -> Player: ...
+    @overload
+    def __getitem__(self, index: slice) -> list[Player]: ...
+    def __getitem__(self, index):
+        return self.players[index]
+
+    def __iter__(self):
+        yield from self.players
+
+    def __len__(self):
+        return len(self.players)
 
 
 @dataclass(kw_only=True)
