@@ -103,7 +103,7 @@ class A2S:
 
         """
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventInfo, proto.info, addr)
+        return self._send(ClientEventInfo, addr, proto.info)
 
     def players(self, addr: Address | None = None) -> ClientEventPlayers:
         """Send an A2S_PLAYER request and wait for a response.
@@ -125,7 +125,7 @@ class A2S:
 
         """
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventPlayers, proto.players, addr)
+        return self._send(ClientEventPlayers, addr, proto.players)
 
     def rules(self, addr: Address | None = None) -> ClientEventRules:
         """Send an A2S_RULES request and wait for a response.
@@ -147,7 +147,7 @@ class A2S:
 
         """
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventRules, proto.rules, addr)
+        return self._send(ClientEventRules, addr, proto.rules)
 
     @classmethod
     def from_addr(
@@ -255,11 +255,11 @@ class A2S:
         """
         return A2SClientProtocol()
 
-    def _send_until(
+    def _send(
         self,
         t: Type[ClientEventT],
-        request: Callable[[], ClientPacket],
         addr: Address | None,
+        payload: Callable[[], ClientPacket],
     ) -> ClientEventT:
         """Use the given request function to generate an outbound packet,
         and wait until the server responds with the given event type.
@@ -276,7 +276,7 @@ class A2S:
         types = (t, ClientEventChallenge)
 
         for _ in range(3):
-            self._send(bytes(request()), addr)
+            self._sendto(bytes(payload()), addr)
             events = list(filter_type(types, self._recv(addr)))
             if not events:
                 # FIXME: not really a timeout, should be a custom exception
@@ -286,7 +286,7 @@ class A2S:
 
         raise ChallengeError("Server responded with too many challenges")
 
-    def _send(self, data: bytes, addr: Address | None) -> int:
+    def _sendto(self, data: bytes, addr: Address | None) -> int:
         if addr is not None:
             return self._sock.sendto(data, addr)
         else:
@@ -327,7 +327,7 @@ class A2S:
 
         proto.receive_datagram(data)
         for packet in proto.packets_to_send():
-            self._send(bytes(packet), addr)
+            self._sendto(bytes(packet), addr)
 
         return proto.events_received()
 
@@ -337,7 +337,7 @@ class A2SGoldsource(A2S):
 
     def info(self, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
         proto = self._get_protocol(addr)
-        return self._send_until(ClientEventGoldsourceInfo, proto.info, addr)
+        return self._send(ClientEventGoldsourceInfo, addr, proto.info)
 
     def _create_protocol(self) -> A2SGoldsourceClientProtocol:
         return A2SGoldsourceClientProtocol()
