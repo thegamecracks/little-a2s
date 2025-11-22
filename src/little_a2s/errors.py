@@ -1,6 +1,14 @@
 class Error(Exception):
-    """The base class for A2S exceptions."""
+    """The base class for A2S exceptions.
+
+    .. versionadded:: 0.6.0
+
+    """
 
 
 class PayloadError(ValueError, Error):
-    """The received A2S packet was malformed."""
+    """A malformed A2S packet was received.
+
+    .. versionadded:: 0.6.0
+
+    """
