@@ -58,6 +58,11 @@ class A2S:
 
         Removed the ``events_received()`` method.
 
+    .. versionchanged:: 0.6.0
+
+        Passing a socket that is not of type :data:`socket.SOCK_DGRAM`
+        will raise :exc:`TypeError` instead of :exc:`ValueError`.
+
     """
 
     buffer_size = 32768  # probably overkill?
