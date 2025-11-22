@@ -72,4 +72,5 @@ API Reference
    sync
    async
    protocol
+   errors
    rules
