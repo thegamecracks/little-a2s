@@ -193,6 +193,7 @@ class A2S:
         :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
+        :raises TypeError: The addr argument was required or forbidden.
 
         """
         addr = self._get_addr(addr)
@@ -216,6 +217,7 @@ class A2S:
         :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
+        :raises TypeError: The addr argument was required or forbidden.
 
         """
         addr = self._get_addr(addr)
@@ -239,6 +241,7 @@ class A2S:
         :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
+        :raises TypeError: The addr argument was required or forbidden.
 
         """
         addr = self._get_addr(addr)
