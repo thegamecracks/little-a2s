@@ -8,6 +8,7 @@ from functools import partial
 from typing import AsyncIterator, Awaitable, Callable, Self, Type
 
 from little_a2s.client.types import Address, ClientEventT
+from little_a2s.errors import ChallengeError
 from little_a2s.events import (
     ClientEvent,
     ClientEventChallenge,
@@ -225,6 +226,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
+        :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
@@ -242,6 +244,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
+        :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
@@ -259,6 +262,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
+        :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
@@ -358,8 +362,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
             if event is not None:
                 return event
 
-        # FIXME: not really a timeout, should use a custom exception
-        raise TimeoutError(f"Server failed to respond with {t.__name__}")
+        raise ChallengeError("Server responded with too many challenges")
 
     @asynccontextmanager
     async def _claim_request(

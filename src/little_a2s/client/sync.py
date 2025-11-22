@@ -4,6 +4,7 @@ from typing import Callable, Self, Type
 
 from little_a2s.client.constants import DEFAULT_TIMEOUT
 from little_a2s.client.types import Address, ClientEventT, filter_type, first
+from little_a2s.errors import ChallengeError
 from little_a2s.events import (
     ClientEvent,
     ClientEventChallenge,
@@ -96,6 +97,7 @@ class A2S:
 
             .. versionadded:: 0.4.0
 
+        :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
 
@@ -117,6 +119,7 @@ class A2S:
 
             .. versionadded:: 0.4.0
 
+        :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
 
@@ -138,6 +141,7 @@ class A2S:
 
             .. versionadded:: 0.4.0
 
+        :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
 
@@ -263,6 +267,7 @@ class A2S:
         This automatically handles challenge responses, re-sending the request
         and waiting again.
 
+        :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError:
             The socket timed out, or the server did not respond with the event.
@@ -274,11 +279,12 @@ class A2S:
             self._send(bytes(request()), addr)
             events = list(filter_type(types, self._recv(addr)))
             if not events:
-                break  # FIXME: this means we got an event of a different type
+                # FIXME: not really a timeout, should be a custom exception
+                raise TimeoutError(f"Server failed to respond with {t.__name__}")
             elif (found := first(t, events)) is not None:
                 return found
 
-        raise TimeoutError(f"Server failed to respond with {t.__name__}")
+        raise ChallengeError("Server responded with too many challenges")
 
     def _send(self, data: bytes, addr: Address | None) -> int:
         if addr is not None:

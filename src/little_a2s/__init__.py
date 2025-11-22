@@ -8,6 +8,7 @@ from .client import (
     last as last,
 )
 from .errors import (
+    ChallengeError as ChallengeError,
     Error as Error,
     PayloadError as PayloadError,
 )

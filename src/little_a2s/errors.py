@@ -15,3 +15,14 @@ class PayloadError(ValueError, Error):
     .. versionadded:: 0.6.0
 
     """
+
+
+class ChallengeError(Error):
+    """The server repeatedly challenged our client in spite of us attempting
+    to comply with their challenges.
+
+    This is a rare exception that suggests the server's A2S implementation is broken.
+
+    .. versionadded:: 0.6.0
+
+    """
