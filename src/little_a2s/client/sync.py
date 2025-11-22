@@ -67,13 +67,15 @@ class A2S:
     """
 
     buffer_size = 32768  # probably overkill?
-    _protocols: dict[Address | None, A2SClientProtocol]
+    _remote_addr: Address | None = None
+    _protocols: dict[Address, A2SClientProtocol]
 
     def __init__(self, sock: socket.socket) -> None:
         if sock.type != socket.SOCK_DGRAM:
             raise TypeError("Socket type must be SOCK_DGRAM")
 
         self._sock = sock
+        self._remote_addr = None  # FIXME: can this be introspected from sock?
         self._protocols = {}
 
     # Connection methods
@@ -129,7 +131,10 @@ class A2S:
         sock = socket.socket(family, type, proto)
         sock.settimeout(timeout)
         sock.connect(addr)
-        return cls(sock)
+
+        obj = cls(sock)
+        obj._remote_addr = addr  # Default address when user calls addr=None
+        return obj
 
     @classmethod
     def from_ipv4(cls, timeout: float | None = DEFAULT_TIMEOUT) -> Self:
@@ -190,6 +195,7 @@ class A2S:
         :raises TimeoutError: The socket timed out.
 
         """
+        addr = self._get_addr(addr)
         proto = self._get_protocol(addr)
         return self._send(ClientEventInfo, addr, proto.info)
 
@@ -212,6 +218,7 @@ class A2S:
         :raises TimeoutError: The socket timed out.
 
         """
+        addr = self._get_addr(addr)
         proto = self._get_protocol(addr)
         return self._send(ClientEventPlayers, addr, proto.players)
 
@@ -234,10 +241,18 @@ class A2S:
         :raises TimeoutError: The socket timed out.
 
         """
+        addr = self._get_addr(addr)
         proto = self._get_protocol(addr)
         return self._send(ClientEventRules, addr, proto.rules)
 
-    def _get_protocol(self, addr: Address | None) -> A2SClientProtocol:
+    def _get_addr(self, addr: Address | None) -> Address:
+        if self._remote_addr and addr:
+            raise TypeError("Socket has remote address, addr= is disallowed")
+        elif not self._remote_addr and not addr:
+            raise TypeError("Socket has no remote address, addr= is required")
+        return addr or self._remote_addr  # type: ignore
+
+    def _get_protocol(self, addr: Address) -> A2SClientProtocol:
         """Get the A2S protocol for the given address, creating a new one
         if it doesn't already exist.
 
@@ -264,7 +279,7 @@ class A2S:
     def _send(
         self,
         t: Type[ClientEventT],
-        addr: Address | None,
+        addr: Address,
         payload: Callable[[], ClientPacket],
     ) -> ClientEventT:
         """Use the given request function to generate an outbound packet,
@@ -282,7 +297,7 @@ class A2S:
         types = (t, ClientEventChallenge)
 
         for _ in range(3):
-            self._sendto(bytes(payload()), addr)
+            self._sock.sendto(bytes(payload()), addr)
             events = list(filter_type(types, self._recv(addr)))
             if not events:
                 # FIXME: not really a timeout, should be a custom exception
@@ -292,17 +307,11 @@ class A2S:
 
         raise ChallengeError("Server responded with too many challenges")
 
-    def _sendto(self, data: bytes, addr: Address | None) -> int:
-        if addr is not None:
-            return self._sock.sendto(data, addr)
-        else:
-            return self._sock.send(data)
-
-    def _recv(self, addr: Address | None) -> list[ClientEvent]:
+    def _recv(self, addr: Address) -> list[ClientEvent]:
         """Read one datagram from the socket and pass it to the protocol.
 
-        If address is not None, this may call :meth:`~socket.socket.recvfrom()`
-        multiple times until a datagram from the given address is received.
+        This may call :meth:`~socket.socket.recvfrom()` multiple times
+        until a datagram from the given address is received.
 
         :param addr: The address to wait for a datagram from.
         :raises PayloadError: The server sent a malformed packet.
@@ -311,15 +320,15 @@ class A2S:
         """
         # NOTE: not thread-safe!
         data, recv_addr = self._sock.recvfrom(self.buffer_size)
-        events = self._receive_datagram(data, addr and recv_addr)
+        events = self._receive_datagram(data, recv_addr)
 
-        while not events or addr and addr != recv_addr:
+        while not events or addr != recv_addr:
             data, recv_addr = self._sock.recvfrom(self.buffer_size)
-            events = self._receive_datagram(data, addr and recv_addr)
+            events = self._receive_datagram(data, recv_addr)
 
         return events
 
-    def _receive_datagram(self, data: bytes, addr: Address | None) -> list[ClientEvent]:
+    def _receive_datagram(self, data: bytes, addr: Address) -> list[ClientEvent]:
         """Pass the datagram to the protocol and return any generated events.
 
         :raises PayloadError: The server sent a malformed packet.
@@ -333,7 +342,7 @@ class A2S:
 
         proto.receive_datagram(data)
         for packet in proto.packets_to_send():
-            self._sendto(bytes(packet), addr)
+            self._sock.sendto(bytes(packet), addr)
 
         return proto.events_received()
 
@@ -342,6 +351,7 @@ class A2SGoldsource(A2S):
     """A synchronous client for A2S Goldsource queries."""
 
     def info(self, addr: Address | None = None) -> ClientEventGoldsourceInfo:  # type: ignore
+        addr = self._get_addr(addr)
         proto = self._get_protocol(addr)
         return self._send(ClientEventGoldsourceInfo, addr, proto.info)
 
