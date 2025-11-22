@@ -65,7 +65,7 @@ class A2S:
 
     def __init__(self, sock: socket.socket) -> None:
         if sock.type != socket.SOCK_DGRAM:
-            raise ValueError("Socket type must be SOCK_DGRAM")
+            raise TypeError("Socket type must be SOCK_DGRAM")
 
         self._sock = sock
         self._protocols = {}
