@@ -7,6 +7,9 @@ from .client import (
     first as first,
     last as last,
 )
+from .errors import (
+    Error as Error,
+)
 from .events import (
     ClientEvent as ClientEvent,
     ClientEventChallenge as ClientEventChallenge,
