@@ -76,6 +76,8 @@ class A2S:
         self._sock = sock
         self._protocols = {}
 
+    # Connection methods
+
     def __enter__(self) -> Self:
         self._sock.__enter__()
         return self
@@ -83,71 +85,7 @@ class A2S:
     def __exit__(self, exc_type, exc_val, tb) -> None:
         return self._sock.__exit__(exc_type, exc_val, tb)
 
-    def info(self, addr: Address | None = None) -> ClientEventInfo:
-        """Send an A2S_INFO request and wait for a response.
-
-        .. versionchanged:: 0.5.0
-
-            addr can now be a positional argument.
-
-        :param addr:
-            The address to send the request to.
-            Does not apply if socket is already connected to an address,
-            such as from :meth:`from_addr()`.
-
-            .. versionadded:: 0.4.0
-
-        :raises ChallengeError: The server sent too many challenges.
-        :raises PayloadError: The server sent a malformed packet.
-        :raises TimeoutError: The socket timed out.
-
-        """
-        proto = self._get_protocol(addr)
-        return self._send(ClientEventInfo, addr, proto.info)
-
-    def players(self, addr: Address | None = None) -> ClientEventPlayers:
-        """Send an A2S_PLAYER request and wait for a response.
-
-        .. versionchanged:: 0.5.0
-
-            addr can now be a positional argument.
-
-        :param addr:
-            The address to send the request to.
-            Does not apply if socket is already connected to an address,
-            such as from :meth:`from_addr()`.
-
-            .. versionadded:: 0.4.0
-
-        :raises ChallengeError: The server sent too many challenges.
-        :raises PayloadError: The server sent a malformed packet.
-        :raises TimeoutError: The socket timed out.
-
-        """
-        proto = self._get_protocol(addr)
-        return self._send(ClientEventPlayers, addr, proto.players)
-
-    def rules(self, addr: Address | None = None) -> ClientEventRules:
-        """Send an A2S_RULES request and wait for a response.
-
-        .. versionchanged:: 0.5.0
-
-            addr can now be a positional argument.
-
-        :param addr:
-            The address to send the request to.
-            Does not apply if socket is already connected to an address,
-            such as from :meth:`from_addr()`.
-
-            .. versionadded:: 0.4.0
-
-        :raises ChallengeError: The server sent too many challenges.
-        :raises PayloadError: The server sent a malformed packet.
-        :raises TimeoutError: The socket timed out.
-
-        """
-        proto = self._get_protocol(addr)
-        return self._send(ClientEventRules, addr, proto.rules)
+    # Constructor methods
 
     @classmethod
     def from_addr(
@@ -230,6 +168,74 @@ class A2S:
         sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         sock.settimeout(timeout)
         return cls(sock)
+
+    # Request methods
+
+    def info(self, addr: Address | None = None) -> ClientEventInfo:
+        """Send an A2S_INFO request and wait for a response.
+
+        .. versionchanged:: 0.5.0
+
+            addr can now be a positional argument.
+
+        :param addr:
+            The address to send the request to.
+            Does not apply if socket is already connected to an address,
+            such as from :meth:`from_addr()`.
+
+            .. versionadded:: 0.4.0
+
+        :raises ChallengeError: The server sent too many challenges.
+        :raises PayloadError: The server sent a malformed packet.
+        :raises TimeoutError: The socket timed out.
+
+        """
+        proto = self._get_protocol(addr)
+        return self._send(ClientEventInfo, addr, proto.info)
+
+    def players(self, addr: Address | None = None) -> ClientEventPlayers:
+        """Send an A2S_PLAYER request and wait for a response.
+
+        .. versionchanged:: 0.5.0
+
+            addr can now be a positional argument.
+
+        :param addr:
+            The address to send the request to.
+            Does not apply if socket is already connected to an address,
+            such as from :meth:`from_addr()`.
+
+            .. versionadded:: 0.4.0
+
+        :raises ChallengeError: The server sent too many challenges.
+        :raises PayloadError: The server sent a malformed packet.
+        :raises TimeoutError: The socket timed out.
+
+        """
+        proto = self._get_protocol(addr)
+        return self._send(ClientEventPlayers, addr, proto.players)
+
+    def rules(self, addr: Address | None = None) -> ClientEventRules:
+        """Send an A2S_RULES request and wait for a response.
+
+        .. versionchanged:: 0.5.0
+
+            addr can now be a positional argument.
+
+        :param addr:
+            The address to send the request to.
+            Does not apply if socket is already connected to an address,
+            such as from :meth:`from_addr()`.
+
+            .. versionadded:: 0.4.0
+
+        :raises ChallengeError: The server sent too many challenges.
+        :raises PayloadError: The server sent a malformed packet.
+        :raises TimeoutError: The socket timed out.
+
+        """
+        proto = self._get_protocol(addr)
+        return self._send(ClientEventRules, addr, proto.rules)
 
     def _get_protocol(self, addr: Address | None) -> A2SClientProtocol:
         """Get the A2S protocol for the given address, creating a new one
