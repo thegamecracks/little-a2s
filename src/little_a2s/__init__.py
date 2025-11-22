@@ -9,6 +9,7 @@ from .client import (
 )
 from .errors import (
     Error as Error,
+    PayloadError as PayloadError,
 )
 from .events import (
     ClientEvent as ClientEvent,

@@ -2,6 +2,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import assert_never
 
+from little_a2s.errors import PayloadError
 from little_a2s.events import (
     ClientEvent,
     ClientEventChallenge,
@@ -51,22 +52,30 @@ class MultiPartResponse:
     """A sequenced mapping of payloads to be assembled."""
 
     def add(self, header: MultiAnyHeader, payload: bytes) -> None:
-        """Add a payload with the given header to the response."""
+        """Add a payload with the given header to the response.
+
+        :raises PayloadError: The data is malformed.
+
+        """
         if header.id != self.id:
-            raise ValueError(f"Expected ID {self.id!r}, got {header.id!r}")
+            raise PayloadError(f"Expected ID {self.id!r}, got {header.id!r}")
         elif header.total != self.total:
-            raise ValueError(f"Expected total {self.total!r}, got {header.total!r}")
+            raise PayloadError(f"Expected total {self.total!r}, got {header.total!r}")
         elif not 0 <= header.current < self.total:
-            raise ValueError(
+            raise PayloadError(
                 f"Expected current in range [0, {self.total!r}), got {header.current!r}"
             )
         elif header.current in self.payloads:
-            raise ValueError(f"Duplicate current index {header.current!r}")
+            raise PayloadError(f"Duplicate current index {header.current!r}")
 
         self.payloads[header.current] = payload
 
     def assemble(self) -> bytes | None:
-        """Assemble the payload together if all parts have been received."""
+        """Assemble the payload together if all parts have been received.
+
+        :raises PayloadError: The data is malformed.
+
+        """
         if len(self.payloads) < self.total:
             return
 
@@ -88,9 +97,9 @@ class MultiPartResponse:
         payload = bz2.decompress(payload)
 
         if len(payload) != size:
-            raise ValueError(f"Expected payload size {size}, got {len(payload)}")
+            raise PayloadError(f"Expected payload size {size}, got {len(payload)}")
         elif zlib.crc32(payload) != checksum:
-            raise ValueError(f"Expected checksum {checksum:X}, got {payload:X}")
+            raise PayloadError(f"Expected checksum {checksum:X}, got {payload:X}")
 
         return payload
 
@@ -128,7 +137,7 @@ class A2SClientProtocol:
     def receive_datagram(self, data: bytes) -> None:
         """Process a packet from the server.
 
-        :raises ValueError: The data is malformed.
+        :raises PayloadError: The data is malformed.
 
         """
         log.debug("Receiving datagram: %r", data)
@@ -140,7 +149,9 @@ class A2SClientProtocol:
             if payload is not None:
                 self._handle_payload(payload)
         except EOFError as e:
-            raise ValueError("Received incomplete data") from e
+            raise PayloadError("Received incomplete data") from e
+        except ValueError as e:
+            raise PayloadError("Received malformed data") from e
 
     def events_received(self) -> list[ClientEvent]:
         """Return a list of events received since this last call."""
@@ -223,7 +234,7 @@ class A2SClientProtocol:
             log.debug("Parsing Goldsource multi-packet payload")
             return self._parse_multi_payload(reader, header)
         else:
-            raise ValueError(f"Unknown header type {header!r}")
+            raise PayloadError(f"Unknown header type {header!r}")
 
     def _parse_multi_payload(
         self,
@@ -294,7 +305,7 @@ class A2SClientProtocol:
             log.debug("Parsing A2S_RULES payload")
             event = ClientEventRules.from_reader(reader)
         else:
-            raise ValueError(f"Unknown payload header type {header:X}")
+            raise PayloadError(f"Unknown payload header type {header:X}")
 
         log.debug("Appending event: %s", type(event).__name__)
         self._events.append(event)
