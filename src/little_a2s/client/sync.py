@@ -96,8 +96,8 @@ class A2S:
 
             .. versionadded:: 0.4.0
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         proto = self._get_protocol(addr)
@@ -117,8 +117,8 @@ class A2S:
 
             .. versionadded:: 0.4.0
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         proto = self._get_protocol(addr)
@@ -138,8 +138,8 @@ class A2S:
 
             .. versionadded:: 0.4.0
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         proto = self._get_protocol(addr)
@@ -263,9 +263,9 @@ class A2S:
         This automatically handles challenge responses, re-sending the request
         and waiting again.
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError:
             The socket timed out, or the server did not respond with the event.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         self._send(bytes(request()), addr)
@@ -294,8 +294,8 @@ class A2S:
         multiple times until a datagram from the given address is received.
 
         :param addr: The address to wait for a datagram from.
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         # NOTE: not thread-safe!
@@ -311,8 +311,8 @@ class A2S:
     def _receive_datagram(self, data: bytes, addr: Address | None) -> list[ClientEvent]:
         """Pass the datagram to the protocol and return any generated events.
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The socket timed out.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         proto = self._protocols.get(addr)

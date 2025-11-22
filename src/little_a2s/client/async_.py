@@ -225,9 +225,9 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         addr = self._get_addr(addr)
@@ -242,9 +242,9 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         addr = self._get_addr(addr)
@@ -259,9 +259,9 @@ class AsyncA2S(asyncio.DatagramProtocol):
             Does not apply if socket is already connected to an address,
             such as from :meth:`from_addr()`.
 
+        :raises PayloadError: The server sent a malformed packet.
         :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
-        :raises ValueError: The server sent a malformed packet.
 
         """
         addr = self._get_addr(addr)
