@@ -268,16 +268,15 @@ class A2S:
             The socket timed out, or the server did not respond with the event.
 
         """
-        self._send(bytes(request()), addr)
         types = (t, ClientEventChallenge)
-        remaining = 3
 
-        while remaining > 0 and (events := list(filter_type(types, self._recv(addr)))):
-            if (found := first(t, events)) is not None:
-                return found
-
+        for _ in range(3):
             self._send(bytes(request()), addr)
-            remaining -= 1
+            events = list(filter_type(types, self._recv(addr)))
+            if not events:
+                break  # FIXME: this means we got an event of a different type
+            elif (found := first(t, events)) is not None:
+                return found
 
         raise TimeoutError(f"Server failed to respond with {t.__name__}")
 
