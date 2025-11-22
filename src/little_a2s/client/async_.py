@@ -228,7 +228,6 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
         :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
-        :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
 
         """
@@ -246,7 +245,6 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
         :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
-        :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
 
         """
@@ -264,7 +262,6 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
         :raises ChallengeError: The server sent too many challenges.
         :raises PayloadError: The server sent a malformed packet.
-        :raises TimeoutError: The server did not respond.
         :raises TypeError: The addr argument was required or forbidden.
 
         """
