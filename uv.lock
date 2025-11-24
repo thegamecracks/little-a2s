@@ -273,7 +273,7 @@ wheels = [
 
 [[package]]
 name = "little-a2s"
-version = "0.6.0.post1"
+version = "0.6.0.post2"
 source = { editable = "." }
 
 [package.dev-dependencies]
