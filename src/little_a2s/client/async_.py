@@ -315,7 +315,10 @@ class AsyncA2S(asyncio.DatagramProtocol):
         if proto is None:
             return log.debug("Ignoring unexpected address %r", addr)
 
-        proto.receive_datagram(data)
+        try:
+            proto.receive_datagram(data)
+        except Exception as e:  # PayloadError
+            return self._set_addr_exception(addr, e)
 
         for packet in proto.packets_to_send():
             self.transport.sendto(bytes(packet), addr)
@@ -342,6 +345,11 @@ class AsyncA2S(asyncio.DatagramProtocol):
         for (fut_addr, _), fut in self._requests.items():
             if addr == fut_addr and not fut.done():
                 fut.set_result(None)
+
+    def _set_addr_exception(self, addr: Address, e: BaseException) -> None:
+        for (fut_addr, _), fut in self._requests.items():
+            if addr == fut_addr and not fut.done():
+                fut.set_exception(e)
 
     async def _send(
         self,

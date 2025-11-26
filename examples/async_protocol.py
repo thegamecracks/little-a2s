@@ -27,6 +27,7 @@ from little_a2s import (
     ClientEventPlayers,
     ClientEventRules,
     ClientPacket,
+    PayloadError,
 )
 
 host = "127.0.0.1"
@@ -78,7 +79,13 @@ class MyA2SProtocol(asyncio.DatagramProtocol):
 
     def datagram_received(self, data: bytes, addr):
         # Whenever we receive a datagram, feed it to the Sans-IO protocol.
-        self._proto.receive_datagram(data)
+        # This may fail if the datagram is corrupted, so consider logging it
+        # or sending the exception to the caller.
+        try:
+            self._proto.receive_datagram(data)
+        except PayloadError as e:
+            if self._send_fut is not None:
+                self._send_fut.set_exception(e)
 
         # The protocol may tell us to send packets in response.
         for packet in self._proto.packets_to_send():
