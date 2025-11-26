@@ -48,6 +48,13 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
     .. versionadded:: 0.5.0
 
+    .. versionchanged:: 0.7.0
+
+        Fixed :exc:`PayloadError` not being raised by request methods.
+
+        Concurrent, pending requests to one address can raise the same PayloadError
+        if any received packet is malformed.
+
     """
 
     _remote_addr: Address | None = None

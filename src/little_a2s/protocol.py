@@ -113,6 +113,10 @@ class A2SClientProtocol:
         The challenge sequence to use for requests.
         This can change dynamically when receiving S2C_CHALLENGE responses.
 
+    .. versionchanged:: 0.7.0
+
+        Removed the ``packets_to_send()`` method.
+
     """
 
     _events: list[ClientEvent]
