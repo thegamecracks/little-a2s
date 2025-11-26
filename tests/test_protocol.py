@@ -34,9 +34,7 @@ def test_single_packets() -> None:
     assert isinstance(events[4], ClientEventPlayers)
     assert isinstance(events[5], ClientEventRules)
     assert len(events) == 6
-
     assert source.events_received() == []
-    assert source.packets_to_send() == []
 
 
 def test_protocol_challenge() -> None:

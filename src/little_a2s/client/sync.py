@@ -344,8 +344,6 @@ class A2S:
             return []
 
         proto.receive_datagram(data)
-        for packet in proto.packets_to_send():
-            self._sock.sendto(bytes(packet), addr)
 
         return proto.events_received()
 

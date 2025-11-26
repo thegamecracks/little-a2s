@@ -320,9 +320,6 @@ class AsyncA2S(asyncio.DatagramProtocol):
         except Exception as e:  # PayloadError
             return self._set_addr_exception(addr, e)
 
-        for packet in proto.packets_to_send():
-            self.transport.sendto(bytes(packet), addr)
-
         events = proto.events_received()
         challenge = None
 

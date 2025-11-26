@@ -87,10 +87,6 @@ class MyA2SProtocol(asyncio.DatagramProtocol):
             if self._send_fut is not None:
                 self._send_fut.set_exception(e)
 
-        # The protocol may tell us to send packets in response.
-        for packet in self._proto.packets_to_send():
-            self.transport.sendto(bytes(packet))
-
         # After parsing the datagram, we may receive events resulting from it.
         # It can take several datagrams in the case of multi-packet responses.
         events = self._proto.events_received()

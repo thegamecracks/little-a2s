@@ -20,7 +20,6 @@ from little_a2s.headers import (
     SimpleHeader as SimpleHeader,
 )
 from little_a2s.packets import (
-    ClientPacket,
     ClientPacketInfo,
     ClientPacketPlayers,
     ClientPacketRules,
@@ -117,22 +116,19 @@ class A2SClientProtocol:
     """
 
     _events: list[ClientEvent]
-    _to_send: list[ClientPacket]
     _responses: dict[int, MultiPartResponse]
 
     def __init__(self, *, challenge: int = -1) -> None:
         self.challenge = challenge
 
         self._events = []
-        self._to_send = []
         self._responses = {}
 
     def __repr__(self) -> str:
         type_ = type(self).__name__
         challenge = self.challenge
         events = len(self._events)
-        packets = len(self._to_send)
-        return f"<{type_} {challenge=}, {events} events, {packets} packets to send>"
+        return f"<{type_} {challenge=}, {events} events>"
 
     def receive_datagram(self, data: bytes) -> None:
         """Process a packet from the server.
@@ -157,11 +153,6 @@ class A2SClientProtocol:
         """Return a list of events received since this last call."""
         current_events, self._events = self._events, []
         return current_events
-
-    def packets_to_send(self) -> list[ClientPacket]:
-        """Return a list of packets to send since this last call."""
-        current_datagrams, self._to_send = self._to_send, []
-        return current_datagrams
 
     def info(self) -> ClientPacketInfo:
         """Create an A2S_INFO packet to send to the server."""
