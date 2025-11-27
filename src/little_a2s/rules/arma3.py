@@ -17,6 +17,13 @@ class Arma3Rules:
 
     .. versionadded:: 0.3.0
 
+    .. versionchanged:: 0.7.1
+
+        Fixed handling DayZ payloads with :meth:`from_rules()`.
+
+        If the rules mapping version is 2, the difficulty will always
+        be set to ``Arma3Difficulty.from_int(0)``.
+
     """
 
     version: int
