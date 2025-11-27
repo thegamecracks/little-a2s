@@ -55,8 +55,17 @@ class Arma3Rules:
 
         version = reader.read_byte()
         overflow = reader.read_byte()
-        dlc = Arma3DLC(reader.read_ushort())
-        difficulty = Arma3Difficulty.from_int(reader.read_ushort())
+
+        if version == 2:
+            # https://community.bistudio.com/wiki/Arma_3:_ServerBrowserProtocol2
+            # Below works for DayZ, but it doesn't conform to the wiki
+            # which says there's meant to be two bytes for difficulty...
+            dlc = Arma3DLC(reader.read_ushort())
+            difficulty = Arma3Difficulty.from_int(0)
+        else:  # version == 3
+            dlc = Arma3DLC(reader.read_ushort())
+            difficulty = Arma3Difficulty.from_int(reader.read_ushort())
+
         dlc_hashes = [reader.read_ulong() for _ in range(dlc.bit_count())]
 
         n_mods = reader.read_byte()
