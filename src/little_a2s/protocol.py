@@ -248,7 +248,7 @@ class A2SClientProtocol:
             log.debug("Found previous response %d", response.id)
             return response
 
-        log.debug("Creeating new response %d", header.id)
+        log.debug("Creating new response %d", header.id)
         compressed = header.compressed if isinstance(header, MultiHeader) else None
         response = MultiPartResponse(
             id=header.id,
