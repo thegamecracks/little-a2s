@@ -59,7 +59,7 @@ class MyA2SProtocol(asyncio.DatagramProtocol):
         self._proto = A2SClientProtocol()
 
         # For this example, we won't try to support concurrent usage,
-        # so we're lock sending and receiving to one task at a time.
+        # so we'll lock sending and receiving to one task at a time.
         self._send_lock = asyncio.Lock()
         self._send_fut = None
 
