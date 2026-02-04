@@ -118,11 +118,10 @@ class Reader:
         """Read a null-terminated, UTF-8 decoded string.
 
         :raises EOFError: Not enough bytes could be read.
-        :raises UnicodeDecodeError: The string could not be decoded as UTF-8.
 
         """
         s = self.read_null_string()
-        return s.decode()
+        return s.decode(errors="replace")
 
     def read_until(self, sep: int) -> bytes:
         """Read until the sep character is found and return all bytes before sep.

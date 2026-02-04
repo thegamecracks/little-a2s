@@ -23,6 +23,7 @@ from tests.constants import (
     A2S_INFO_PROJECT_ZOMBOID,
     A2S_INFO_SIN1_MP,
     A2S_PLAYER,
+    A2S_PLAYER_MALFORMED_UTF8,
     A2S_PLAYER_EMPTY,
     A2S_RULES_ARMA3,
     A2S_RULES_PROJECT_ZOMBOID,
@@ -180,6 +181,20 @@ def test_a2s_player() -> None:
 def test_a2s_player_empty() -> None:
     players = ClientEventPlayers.from_reader(Reader(A2S_PLAYER_EMPTY[5:]))
     assert players == ClientEventPlayers(players=[])
+
+
+def test_a2s_player_malformed_utf8() -> None:
+    players = ClientEventPlayers.from_reader(Reader(A2S_PLAYER_MALFORMED_UTF8[5:]))
+    assert players == ClientEventPlayers(
+        players=[
+            Player(
+                index=0,
+                name="芭芭�?",
+                score=0,
+                duration=619.0714111328125,
+            ),
+        ]
+    )
 
 
 def test_a2s_rules_project_zomboid() -> None:
