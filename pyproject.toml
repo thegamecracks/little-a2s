@@ -37,7 +37,7 @@ dev = [
 docs = [
     "sphinx~=9.0",
     "sphinx-autodoc-typehints~=3.6",
-    "sphinx-book-theme~=1.1",
+    "sphinx-book-theme~=1.2",
 ]
 
 [project.urls]
