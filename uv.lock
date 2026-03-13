@@ -315,7 +315,7 @@ dev = [
 docs = [
     { name = "sphinx", specifier = "~=9.0" },
     { name = "sphinx-autodoc-typehints", specifier = "~=3.6" },
-    { name = "sphinx-book-theme", specifier = "~=1.1" },
+    { name = "sphinx-book-theme", specifier = "~=1.2" },
 ]
 
 [[package]]
