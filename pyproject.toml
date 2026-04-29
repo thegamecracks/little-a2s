@@ -27,6 +27,18 @@ classifiers = [
     "Topic :: System :: Networking",
     "Typing :: Typed",
 ]
+keywords = [
+    "a2s",
+    "asyncio",
+    "query",
+    "sansio",
+    "source",
+    "source query",
+    "steam",
+    "steam query",
+    "valve",
+    "valve source query",
+]
 dependencies = []
 
 [dependency-groups]
