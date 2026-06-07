@@ -1,7 +1,15 @@
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import Self, SupportsIndex, overload
+from typing import (
+    ItemsView,
+    Iterator,
+    KeysView,
+    Self,
+    SupportsIndex,
+    ValuesView,
+    overload,
+)
 
 from little_a2s.enums import _EnumReprMixin
 from little_a2s.reader import Reader
@@ -344,7 +352,7 @@ class ClientEventPlayers(ClientEvent, Sequence[Player]):
 
         return cls(players=players)
 
-    def __contains__(self, item):
+    def __contains__(self, item: object) -> bool:
         return item in self.players
 
     @overload
@@ -354,10 +362,10 @@ class ClientEventPlayers(ClientEvent, Sequence[Player]):
     def __getitem__(self, index):
         return self.players[index]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Player]:
         yield from self.players
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.players)
 
 
@@ -397,25 +405,25 @@ class ClientEventRules(ClientEvent, Mapping[bytes, bytes]):
 
         return cls(rules=rules)
 
-    def __contains__(self, item):
+    def __contains__(self, item: object) -> bool:
         return item in self.rules
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: bytes) -> bytes:
         return self.rules[index]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[bytes]:
         yield from self.rules
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.rules)
 
-    def keys(self):
+    def keys(self) -> KeysView[bytes]:
         return self.rules.keys()
 
-    def items(self):
+    def items(self) -> ItemsView[bytes, bytes]:
         return self.rules.items()
 
-    def values(self):
+    def values(self) -> ValuesView[bytes]:
         return self.rules.values()
 
 
