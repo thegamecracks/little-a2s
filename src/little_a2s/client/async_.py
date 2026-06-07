@@ -5,7 +5,7 @@ import logging
 import socket
 from contextlib import asynccontextmanager
 from functools import partial
-from typing import AsyncIterator, Awaitable, Callable, Self, Type
+from typing import AsyncIterator, Awaitable, Callable, Self, Type, cast
 
 from little_a2s.client.types import Address, ClientEventT
 from little_a2s.errors import ChallengeError
@@ -178,6 +178,9 @@ class AsyncA2S(asyncio.DatagramProtocol):
             addr = addresses[0]
 
         family, _, proto, _, addr = addr
+        # exclude tuple[int, bytes] from inferred type
+        addr = cast(tuple[str, int] | tuple[str, int, int, int], addr)
+
         await loop.create_datagram_endpoint(
             lambda: self,
             remote_addr=addr[:2],
