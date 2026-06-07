@@ -147,7 +147,7 @@ def query_addr(addr: Address, *, goldsource: bool, timeout: float) -> QueryResul
 def print_query_results(results: QueryResults, *, format: OutputFormat) -> None:
     if format == OutputFormat.JSON:
         info = asdict(results.info)
-        players = results.players.players
+        players = [asdict(p) for p in results.players.players]
         try:
             rules = results.rules.decode()
         except UnicodeDecodeError:
