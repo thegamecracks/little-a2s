@@ -56,7 +56,7 @@ def main() -> None:
         "-t",
         "--timeout",
         default=DEFAULT_TIMEOUT,
-        help="The timeout between responses (default: %(default)s)",
+        help="The query timeout in seconds (default: %(default)s)",
         type=float,
     )
     parser.add_argument(
@@ -68,7 +68,7 @@ def main() -> None:
     )
     parser.add_argument(
         "addr",
-        help="The query host and port in format host:port (IPv4, IPv6, DNS name)",
+        help="The query address in host:port format",
         type=parse_address,
     )
 
