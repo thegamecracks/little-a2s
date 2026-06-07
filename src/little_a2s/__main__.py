@@ -156,7 +156,7 @@ def print_query_results(results: QueryResults, *, format: OutputFormat) -> None:
             }
 
         data = {"info": info, "players": players, "rules": rules}
-        print(json.dumps(data, indent=4))
+        print(json.dumps(data, ensure_ascii=False, indent=4))
     elif format == OutputFormat.NONE:
         pass  # useful for checking that a server is online without output
     elif format == OutputFormat.TEXT:
