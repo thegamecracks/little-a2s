@@ -103,15 +103,12 @@ def parse_address(addr: str) -> Address:
 
 
 def setup_logging(*, verbose: int) -> None:
-    if verbose > 1:
+    if verbose > 0:
         format = "%(levelname)-7s: %(name)-30s: %(message)s"
         root_level = logging.DEBUG
-    elif verbose > 0:
-        format = "%(levelname)s: %(message)s"
-        root_level = logging.INFO
     else:
         format = "%(levelname)s: %(message)s"
-        root_level = logging.WARNING
+        root_level = logging.INFO
 
     logging.basicConfig(format=format, level=root_level)
 
