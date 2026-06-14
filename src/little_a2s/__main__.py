@@ -24,7 +24,6 @@ from little_a2s import (
     ClientEventRules,
     Error,
 )
-from little_a2s.client.constants import DEFAULT_TIMEOUT
 
 Address = tuple[str, int]
 
@@ -73,7 +72,7 @@ def main() -> None:
     parser.add_argument(
         "-t",
         "--timeout",
-        default=DEFAULT_TIMEOUT,
+        default=1.0,
         help="The query timeout in seconds (default: %(default)s)",
         type=float,
     )
