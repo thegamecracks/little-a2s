@@ -39,6 +39,24 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
+        "--info",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Query A2S_INFO from server (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--players",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Query A2S_PLAYER from server (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--rules",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Query A2S_RULES from server (default: %(default)s)",
+    )
+    parser.add_argument(
         "-f",
         "--format",
         default="text",
@@ -74,6 +92,9 @@ def main() -> None:
 
     args = parser.parse_args()
     addr: Address = args.addr
+    info: bool = args.info
+    players: bool = args.players
+    rules: bool = args.rules
     format: OutputFormat = args.format
     goldsource: bool = args.goldsource
     timeout: float = args.timeout
@@ -82,11 +103,23 @@ def main() -> None:
     setup_logging(verbose=verbose)
 
     try:
-        results = query_addr(addr, goldsource=goldsource, timeout=timeout)
+        results = query_addr(
+            addr,
+            query_flags=QueryFlags(info=info, players=players, rules=rules),
+            goldsource=goldsource,
+            timeout=timeout,
+        )
     except (Error, TimeoutError) as e:
         return log.error("Failed to query server: %s", e)
 
     print_query_results(results, format=format)
+
+
+@dataclass
+class QueryFlags:
+    info: bool
+    players: bool
+    rules: bool
 
 
 class OutputFormat(StrEnum):
@@ -115,29 +148,39 @@ def setup_logging(*, verbose: int) -> None:
 
 @dataclass(kw_only=True)
 class QueryResults:
-    info: ClientEventInfo | ClientEventGoldsourceInfo
-    players: ClientEventPlayers
-    rules: ClientEventRules
+    info: ClientEventInfo | ClientEventGoldsourceInfo | None
+    players: ClientEventPlayers | None
+    rules: ClientEventRules | None
 
 
-def query_addr(addr: Address, *, goldsource: bool, timeout: float) -> QueryResults:
+def query_addr(
+    addr: Address,
+    *,
+    query_flags: QueryFlags,
+    goldsource: bool,
+    timeout: float,
+) -> QueryResults:
     host, port = addr
     host = str(host)
+    info = None
+    players = None
+    rules = None
 
     if goldsource:
-        with A2SGoldsource.from_addr(host, port, timeout=timeout) as a2s:
-            log.info("Querying A2S_INFO...")
-            info = a2s.info()
-            log.info("Querying A2S_PLAYERS...")
-            players = a2s.players()
-            log.info("Querying A2S_RULES...")
-            rules = a2s.rules()
+        a2s = A2SGoldsource.from_addr(host, port, timeout=timeout)
     else:
-        with A2S.from_addr(host, port, timeout=timeout) as a2s:
+        a2s = A2S.from_addr(host, port, timeout=timeout)
+
+    with a2s:
+        if query_flags.info:
             log.info("Querying A2S_INFO...")
             info = a2s.info()
+
+        if query_flags.players:
             log.info("Querying A2S_PLAYERS...")
             players = a2s.players()
+
+        if query_flags.rules:
             log.info("Querying A2S_RULES...")
             rules = a2s.rules()
 
@@ -146,34 +189,53 @@ def query_addr(addr: Address, *, goldsource: bool, timeout: float) -> QueryResul
 
 def print_query_results(results: QueryResults, *, format: OutputFormat) -> None:
     if format == OutputFormat.JSON:
-        info = asdict(results.info)
-        players = [asdict(p) for p in results.players.players]
-        try:
-            rules = results.rules.decode()
-        except UnicodeDecodeError:
-            rules = {
-                stringify_bytes(k): stringify_bytes(v) for k, v in results.rules.items()
-            }
-
-        data = {"info": info, "players": players, "rules": rules}
-        print(json.dumps(data, ensure_ascii=False, indent=4))
+        _print_query_results_json(results)
     elif format == OutputFormat.NONE:
         pass  # useful for checking that a server is online without output
     elif format == OutputFormat.TEXT:
+        _print_query_results_text(results)
+    else:
+        assert_never(format)
+
+
+def _print_query_results_json(results: QueryResults) -> None:
+    data = {"info": None, "players": None, "rules": None}
+
+    if results.info is not None:
+        data["info"] = asdict(results.info)
+
+    if results.players is not None:
+        data["players"] = [asdict(p) for p in results.players.players]
+
+    if results.rules is not None:
+        try:
+            data["rules"] = results.rules.decode()
+        except UnicodeDecodeError:
+            data["rules"] = {
+                stringify_bytes(k): stringify_bytes(v) for k, v in results.rules.items()
+            }
+
+    print(json.dumps(data, ensure_ascii=False, indent=4))
+
+
+def _print_query_results_text(results: QueryResults) -> None:
+    if results.info is not None:
         print("A2S_INFO:")
         info = asdict(results.info)
         for k, v in info.items():
             print(f"  {k} = {v}")
-
         print()
+
+    if results.players is not None:
         print("A2S_PLAYER:")
         for i, player in enumerate(results.players, start=1):
             duration = datetime.timedelta(seconds=int(player.duration))
             print(
                 f"  {i: 3d}. {player.name!r:32s} (score: {player.score}, duration: {duration})"
             )
-
         print()
+
+    if results.rules is not None:
         print("A2S_RULES:")
         try:
             for k, v in results.rules.decode().items():
@@ -183,8 +245,7 @@ def print_query_results(results: QueryResults, *, format: OutputFormat) -> None:
             for k, v in results.rules.items():
                 v = truncate_rule_value(v)
                 print(f"  {k}: {v}")
-    else:
-        assert_never(format)
+        print()
 
 
 def stringify_bytes(b: bytes) -> str:
