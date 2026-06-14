@@ -177,7 +177,7 @@ def query_addr(
             info = a2s.info()
 
         if query_flags.players:
-            log.info("Querying A2S_PLAYERS...")
+            log.info("Querying A2S_PLAYER...")
             players = a2s.players()
 
         if query_flags.rules:
