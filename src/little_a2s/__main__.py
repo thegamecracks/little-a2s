@@ -11,6 +11,7 @@ import argparse
 import datetime
 import json
 import logging
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from enum import StrEnum
 from typing import assert_never
@@ -69,6 +70,12 @@ def main() -> None:
         action="store_true",
         help="[EXPERIMENTAL] Parse Goldsource A2S_INFO responses instead of Source",
     )
+    # FIXME: is there a better name for this flag?
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="[EXPERIMENTAL] Fail if any query receives no response",
+    )
     parser.add_argument(
         "-t",
         "--timeout",
@@ -96,6 +103,7 @@ def main() -> None:
     rules: bool = args.rules
     format: OutputFormat = args.format
     goldsource: bool = args.goldsource
+    strict: bool = args.strict
     timeout: float = args.timeout
     verbose: int = args.verbose
 
@@ -106,6 +114,7 @@ def main() -> None:
             addr,
             query_flags=QueryFlags(info=info, players=players, rules=rules),
             goldsource=goldsource,
+            strict=strict,
             timeout=timeout,
         )
     except (Error, TimeoutError) as e:
@@ -157,13 +166,11 @@ def query_addr(
     *,
     query_flags: QueryFlags,
     goldsource: bool,
+    strict: bool,
     timeout: float,
 ) -> QueryResults:
     host, port = addr
     host = str(host)
-    info = None
-    players = None
-    rules = None
 
     if goldsource:
         a2s = A2SGoldsource.from_addr(host, port, timeout=timeout)
@@ -171,17 +178,40 @@ def query_addr(
         a2s = A2S.from_addr(host, port, timeout=timeout)
 
     with a2s:
-        if query_flags.info:
-            log.info("Querying A2S_INFO...")
-            info = a2s.info()
+        return _query_addr(a2s, query_flags=query_flags, strict=strict)
 
-        if query_flags.players:
-            log.info("Querying A2S_PLAYER...")
-            players = a2s.players()
 
-        if query_flags.rules:
-            log.info("Querying A2S_RULES...")
-            rules = a2s.rules()
+def _query_addr(
+    a2s: A2S | A2SGoldsource,
+    *,
+    query_flags: QueryFlags,
+    strict: bool,
+) -> QueryResults:
+    @contextmanager
+    def maybe_query(name: str, flag: bool):
+        if not flag:
+            return
+
+        log.info("Querying %s...", name)
+        try:
+            yield
+        except (Error, TimeoutError) as e:
+            if not strict:
+                return log.warning("%s", e)
+            raise
+
+    info = None
+    players = None
+    rules = None
+
+    with maybe_query("A2S_INFO", query_flags.info):
+        info = a2s.info()
+
+    with maybe_query("A2S_PLAYER", query_flags.players):
+        players = a2s.players()
+
+    with maybe_query("A2S_RULES", query_flags.rules):
+        rules = a2s.rules()
 
     return QueryResults(info=info, players=players, rules=rules)
 
