@@ -188,10 +188,7 @@ def _query_addr(
     strict: bool,
 ) -> QueryResults:
     @contextmanager
-    def maybe_query(name: str, flag: bool):
-        if not flag:
-            return
-
+    def maybe_query(name: str):
         log.info("Querying %s...", name)
         try:
             yield
@@ -204,14 +201,17 @@ def _query_addr(
     players = None
     rules = None
 
-    with maybe_query("A2S_INFO", query_flags.info):
-        info = a2s.info()
+    if query_flags.info:
+        with maybe_query("A2S_INFO"):
+            info = a2s.info()
 
-    with maybe_query("A2S_PLAYER", query_flags.players):
-        players = a2s.players()
+    if query_flags.players:
+        with maybe_query("A2S_PLAYER"):
+            players = a2s.players()
 
-    with maybe_query("A2S_RULES", query_flags.rules):
-        rules = a2s.rules()
+    if query_flags.rules:
+        with maybe_query("A2S_RULES"):
+            rules = a2s.rules()
 
     return QueryResults(info=info, players=players, rules=rules)
 
