@@ -14,7 +14,7 @@ import logging
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from enum import StrEnum
-from typing import assert_never
+from typing import assert_never, Any
 
 from little_a2s import (
     A2S,
@@ -226,7 +226,7 @@ def print_query_results(results: QueryResults, *, format: OutputFormat) -> None:
 
 
 def _print_query_results_json(results: QueryResults) -> None:
-    data = {"info": None, "players": None, "rules": None}
+    data: dict[str, Any] = {"info": None, "players": None, "rules": None}
 
     if results.info is not None:
         data["info"] = asdict(results.info)
