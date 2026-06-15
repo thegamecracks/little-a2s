@@ -197,23 +197,21 @@ def _query_addr(
                 return log.warning("%s", e)
             raise
 
-    info = None
-    players = None
-    rules = None
+    results = QueryResults(info=None, players=None, rules=None)
 
     if query_flags.info:
         with maybe_query("A2S_INFO"):
-            info = a2s.info()
+            results.info = a2s.info()
 
     if query_flags.players:
         with maybe_query("A2S_PLAYER"):
-            players = a2s.players()
+            results.players = a2s.players()
 
     if query_flags.rules:
         with maybe_query("A2S_RULES"):
-            rules = a2s.rules()
+            results.rules = a2s.rules()
 
-    return QueryResults(info=info, players=players, rules=rules)
+    return results
 
 
 def print_query_results(results: QueryResults, *, format: OutputFormat) -> None:
