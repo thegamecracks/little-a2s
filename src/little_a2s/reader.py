@@ -1,6 +1,6 @@
 import struct
 from io import BytesIO
-from typing import Literal, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -46,7 +46,7 @@ class Reader:
         """
         return self.read(1).decode("ascii")
 
-    def read_null(self) -> Literal[0]:
+    def read_null(self) -> int:
         """Read a null byte.
 
         :raises EOFError: Not enough bytes could be read.
