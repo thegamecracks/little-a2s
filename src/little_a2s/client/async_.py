@@ -142,6 +142,13 @@ class AsyncA2S(asyncio.DatagramProtocol):
     ) -> Self:
         """Resolve the given host and create an A2S query.
 
+        ::
+
+            async with AsyncA2S.from_addr("127.0.0.1", 27015) as a2s, asyncio.timeout(1):
+                print(await a2s.info())
+                print(await a2s.players())
+                print(await a2s.rules())
+
         :param host: The IPv4 address, IPv6 address, or domain name to query.
         :param port: The port to query.
         :param prefer_ipv4: If True, prefer to resolve hostnames to IPv4 addresses.

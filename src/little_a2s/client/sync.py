@@ -100,6 +100,13 @@ class A2S:
     ) -> Self:
         """Resolve the given host and create an A2S query.
 
+        ::
+
+            with A2S.from_addr("127.0.0.1", 27015) as a2s:
+                print(a2s.info())
+                print(a2s.players())
+                print(a2s.rules())
+
         :param host: The IPv4 address, IPv6 address, or domain name to query.
         :param port: The port to query.
         :param timeout: The timeout to set on the socket.
