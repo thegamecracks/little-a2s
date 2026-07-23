@@ -295,13 +295,13 @@ docs = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "coverage", specifier = "~=7.11" },
-    { name = "pytest", specifier = "~=9.0" },
+    { name = "coverage", specifier = ">=7.11" },
+    { name = "pytest", specifier = ">=9.0" },
 ]
 docs = [
-    { name = "sphinx", specifier = "~=9.0" },
-    { name = "sphinx-autodoc-typehints", specifier = "~=3.6" },
-    { name = "sphinx-book-theme", specifier = "~=1.2" },
+    { name = "sphinx", specifier = ">=9.0" },
+    { name = "sphinx-autodoc-typehints", specifier = ">=3.6" },
+    { name = "sphinx-book-theme", specifier = ">=1.2" },
 ]
 
 [[package]]

@@ -43,13 +43,13 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "coverage~=7.11",
-    "pytest~=9.0",
+    "coverage>=7.11",
+    "pytest>=9.0",
 ]
 docs = [
-    "sphinx~=9.0",
-    "sphinx-autodoc-typehints~=3.6",
-    "sphinx-book-theme~=1.2",
+    "sphinx>=9.0",
+    "sphinx-autodoc-typehints>=3.6",
+    "sphinx-book-theme>=1.2",
 ]
 
 [project.urls]
