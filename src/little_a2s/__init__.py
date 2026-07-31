@@ -13,6 +13,7 @@ from .errors import (
     PayloadError as PayloadError,
 )
 from .events import (
+    VAC as VAC,
     ClientEvent as ClientEvent,
     ClientEventChallenge as ClientEventChallenge,
     ClientEventGoldsourceInfo as ClientEventGoldsourceInfo,
@@ -27,7 +28,6 @@ from .events import (
     GoldsourceModType as GoldsourceModType,
     Player as Player,
     ServerType as ServerType,
-    VAC as VAC,
     Visibility as Visibility,
 )
 from .headers import (
@@ -52,8 +52,8 @@ from .protocol import (
 )
 from .reader import Readable as Readable, Reader as Reader
 from .rules import (
-    Arma3DLC as Arma3DLC,
     Arma3Difficulty as Arma3Difficulty,
+    Arma3DLC as Arma3DLC,
     Arma3Mod as Arma3Mod,
     Arma3Rules as Arma3Rules,
 )

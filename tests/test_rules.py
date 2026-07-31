@@ -1,6 +1,6 @@
 from little_a2s.events import ClientEventRules
 from little_a2s.reader import Reader
-from little_a2s.rules.arma3 import Arma3DLC, Arma3Difficulty, Arma3Mod, Arma3Rules
+from little_a2s.rules.arma3 import Arma3Difficulty, Arma3DLC, Arma3Mod, Arma3Rules
 from tests.constants import A2S_RULES_ARMA3, A2S_RULES_DAYZ
 
 

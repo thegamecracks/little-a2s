@@ -3,9 +3,10 @@ from __future__ import annotations
 import asyncio
 import logging
 import socket
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from functools import partial
-from typing import AsyncIterator, Awaitable, Callable, Self, Type, cast
+from typing import Self, cast
 
 from little_a2s.client.types import Address, ClientEventT
 from little_a2s.errors import ChallengeError
@@ -61,7 +62,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
     _transport: asyncio.DatagramTransport | None = None
     _protocols: dict[Address, A2SClientProtocol]
     _requests: dict[
-        tuple[Address, Type[ClientEvent]],
+        tuple[Address, type[ClientEvent]],
         asyncio.Future[ClientEvent | None],
     ]
     _close_fut: asyncio.Future[None]
@@ -334,7 +335,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
         try:
             proto.receive_datagram(data)
-        except Exception as e:  # PayloadError
+        except Exception as e:  # noqa: BLE001 should be PayloadError, but we'll pass any exception
             return self._set_addr_exception(addr, e)
 
         events = proto.events_received()
@@ -367,7 +368,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
 
     async def _send(
         self,
-        t: Type[ClientEventT],
+        t: type[ClientEventT],
         addr: Address,
         payload: Callable[[], ClientPacket],
     ) -> ClientEventT:
@@ -386,7 +387,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
     @asynccontextmanager
     async def _claim_request(
         self,
-        key: tuple[Address, Type[ClientEvent]],
+        key: tuple[Address, type[ClientEvent]],
     ) -> AsyncIterator[asyncio.Future]:
         loop = asyncio.get_running_loop()
 

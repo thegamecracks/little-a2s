@@ -1,5 +1,3 @@
-from little_a2s.protocol import A2SClientProtocol
-
 from little_a2s.events import (
     ClientEventChallenge,
     ClientEventGoldsourceInfo,
@@ -7,6 +5,7 @@ from little_a2s.events import (
     ClientEventPlayers,
     ClientEventRules,
 )
+from little_a2s.protocol import A2SClientProtocol
 from tests.constants import (
     A2S_INFO_COUNTERSTRIKE_SOURCE,
     A2S_INFO_GOLDSOURCE_COUNTERSTRIKE,

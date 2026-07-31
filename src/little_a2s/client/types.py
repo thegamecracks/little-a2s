@@ -1,4 +1,5 @@
-from typing import Iterable, Iterator, Type, TypeVar
+from collections.abc import Iterable, Iterator
+from typing import TypeVar
 
 from little_a2s.events import ClientEvent
 
@@ -8,7 +9,7 @@ ClientEventT = TypeVar("ClientEventT", bound=ClientEvent)
 
 
 def filter_type(
-    t: Type[T] | tuple[Type[T], ...],
+    t: type[T] | tuple[type[T], ...],
     it: Iterable[object],
     /,
 ) -> Iterator[T]:
@@ -22,7 +23,7 @@ def filter_type(
             yield x
 
 
-def first(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None:
+def first(t: type[T] | tuple[type[T], ...], it: Iterable[object], /) -> T | None:
     """Return the first element of the given type in an iterable.
 
     .. versionadded:: 0.2.0
@@ -31,7 +32,7 @@ def first(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None
     return next(filter_type(t, it), None)
 
 
-def last(t: Type[T] | tuple[Type[T], ...], it: Iterable[object], /) -> T | None:
+def last(t: type[T] | tuple[type[T], ...], it: Iterable[object], /) -> T | None:
     """Return the last element of the given type in an iterable.
 
     .. versionadded:: 0.2.0

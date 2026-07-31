@@ -14,7 +14,7 @@ import logging
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from enum import StrEnum
-from typing import assert_never, Any
+from typing import Any, assert_never
 
 from little_a2s import (
     A2S,

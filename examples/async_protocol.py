@@ -15,7 +15,7 @@ Example output (see host and port):
 """
 
 import asyncio
-from typing import Callable
+from collections.abc import Callable
 
 from little_a2s import (
     # This is the class that handles parsing datagrams into events.
@@ -37,7 +37,7 @@ port = 27015
 async def main():
     loop = asyncio.get_running_loop()
 
-    transport, protocol = await loop.create_datagram_endpoint(
+    _transport, protocol = await loop.create_datagram_endpoint(
         MyA2SProtocol,
         remote_addr=(host, port),
     )

@@ -12,12 +12,12 @@ from little_a2s.events import (
     ClientEventRules,
 )
 from little_a2s.headers import (
-    Compression as Compression,
-    Header as Header,
-    HeaderType as HeaderType,
-    MultiGoldsourceHeader as MultiGoldsourceHeader,
-    MultiHeader as MultiHeader,
-    SimpleHeader as SimpleHeader,
+    Compression,
+    Header,
+    HeaderType,
+    MultiGoldsourceHeader,
+    MultiHeader,
+    SimpleHeader,
 )
 from little_a2s.packets import (
     ClientPacketInfo,

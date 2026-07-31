@@ -1,13 +1,9 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import ItemsView, Iterator, KeysView, Mapping, Sequence, ValuesView
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import (
-    ItemsView,
-    Iterator,
-    KeysView,
     Self,
     SupportsIndex,
-    ValuesView,
     overload,
 )
 

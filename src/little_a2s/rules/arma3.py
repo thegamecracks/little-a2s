@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import IntFlag
-from typing import Mapping, Self
+from typing import Self
 
 from little_a2s.events import ClientEventRules
 from little_a2s.reader import Reader

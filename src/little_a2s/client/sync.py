@@ -1,6 +1,7 @@
 import logging
 import socket
-from typing import Callable, Self, Type
+from collections.abc import Callable
+from typing import Self
 
 from little_a2s.client.constants import DEFAULT_TIMEOUT
 from little_a2s.client.types import Address, ClientEventT, filter_type, first
@@ -288,7 +289,7 @@ class A2S:
 
     def _send(
         self,
-        t: Type[ClientEventT],
+        t: type[ClientEventT],
         addr: Address,
         payload: Callable[[], ClientPacket],
     ) -> ClientEventT:

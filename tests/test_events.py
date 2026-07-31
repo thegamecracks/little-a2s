@@ -15,7 +15,6 @@ from little_a2s.events import (
     Visibility,
 )
 from little_a2s.reader import Reader
-
 from tests.constants import (
     A2S_INFO_ARMA3,
     A2S_INFO_COUNTERSTRIKE_SOURCE,
@@ -23,8 +22,8 @@ from tests.constants import (
     A2S_INFO_PROJECT_ZOMBOID,
     A2S_INFO_SIN1_MP,
     A2S_PLAYER,
-    A2S_PLAYER_MALFORMED_UTF8,
     A2S_PLAYER_EMPTY,
+    A2S_PLAYER_MALFORMED_UTF8,
     A2S_RULES_ARMA3,
     A2S_RULES_PROJECT_ZOMBOID,
     S2C_CHALLENGE,

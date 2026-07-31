@@ -1,4 +1,5 @@
 import asyncio
+
 from little_a2s import AsyncA2S
 
 host = "127.0.0.1"
