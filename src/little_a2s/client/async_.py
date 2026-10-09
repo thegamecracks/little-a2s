@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import socket
-from collections.abc import AsyncIterator, Awaitable, Callable
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from functools import partial
 from typing import Self, cast
@@ -388,7 +388,7 @@ class AsyncA2S(asyncio.DatagramProtocol):
     async def _claim_request(
         self,
         key: tuple[Address, type[ClientEvent]],
-    ) -> AsyncIterator[asyncio.Future]:
+    ) -> AsyncGenerator[asyncio.Future]:
         loop = asyncio.get_running_loop()
 
         async with self._request_cond:
